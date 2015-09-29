@@ -1,0 +1,42 @@
+Hva som må gjøres:
+- bestemme løsningsmetode aka finite difference method
+- gå gjennom hvordan man løser problemet for å finne ut om  vi ikke overser noe
+	- ikke faste vegger
+	- sjekke om den treffer kanten av grensene våre eller bare se det på plottet, er tross alt unødvendig med tid
+	(sjekke sannsyneligheten til slutt)
+- må finne ut hvordan vi kommer fram til en initial tilstand
+	- trenger vi et tidsprang i initial tilstandene?
+	- hvilke parametere trenger og ønsker vi til å bestemme initialtilstanden
+	- hvilke krav stiller vi til initial tilstanden 
+- vise at løsningen vår konvergerer, og evt et feil estimat, hvilke krav må vi stille til løsningen vår
+	- kan være dette er det vanskeligste 
+- lage en skisse til løsning
+	- kan ha mindre enn et rektangel for raskere kjøretid, men det er stor problemer med dette
+	- kan utvide matrisen etter hvordan bølgen beveger seg, komplisert, ikke nødvendigvis raskere (spesielt ikke ved komplekse potensialer)
+- finne ut hvordan man setter inn c++ kode i python
+- lage en fungerende løsning 
+- lage løsningen enda mer effektiv
+- renskrive løsningen og gjøre den forståelig
+- teste løsningen med ting vi kjenner løsningen på 
+	- fri partikkel
+	- barriere
+	- partikkel i boks
+	- interferensmønster gjennom spalter
+- finne interessante ting å simulere
+- skrive rapport? 
+	- finne et eksempel på en numerisk rapport
+	- gjøre det ordentlig i latex?
+	- blir kanskje ikke så lang
+- hva trenger vi å lese oss opp på?
+	- konvergens, stabilitet, (diffligninger generelt)
+	- feilestimater
+	- kvante (hvilke deler?)
+- opprette getdatajoy (dele ting på noen andre måter) (takler den c++?)
+- noen fordeling eller bare jobbe nokså fritt (har fungert veldig bra egentlig)
+- ønsker vi å prøve å gjøre oss ferdig tidlig?
+- skal vi avtale når vi skal se på det neste gang etter bare fortløpende?
+- hva skal vi begynne med å se på?
+- diskutere kvante generet for bedre forståelse når det passer seg?
+
+github
+to dim, finite difference method, lese opp på konvergens++, men venter med å faktisk bevise det, finne starte med å finne fri partikkel
