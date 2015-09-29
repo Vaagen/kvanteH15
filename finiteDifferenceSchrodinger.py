@@ -68,3 +68,4 @@ sec = T % 60
 print "min " + str(min) + " sec " + str(sec)
 plt.show()
 
+#kan jeg gjøre dette fra nettsiden
