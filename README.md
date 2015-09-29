@@ -1,21 +1,33 @@
 # kvanteH15
 Numeric solution to schrodinger equation
 
-test håkon
 
+
+
+GIT COMMANDS
 
 git clone https://github.com/Vaagen/kvanteH15.git
 	Kloner mappen fra github
 
-git add <filnavn>      Legger til endringer i <filnavn>
+git add <filnavn> 
+	Legger til endringer i <filnavn>
 
-git commit -m ‘Forklaring’       gjør klar endringene og lagrer                                 dem sammen med forklaringen
+git commit -m ‘Forklaring’ 
+	gjør klar endringene og lagrer dem sammen med forklaringen
 
+git pull origin
+	Denne laster inn endringer i origin
 
-git pull origin         Denne laster inn endringer i origin
+NB: Bruk pull før du bruker push, da lagrer du ikke over noe av det som ligger på origin…
 
-	Bruk pull før du bruker push, da lagrer du ikke over noe av det som ligger på origin…
+git push origin	
+	Laster opp endringene til origin
 
+git log --oneline
+	Viser liste over tidligere endringer
 
-git push origin		Laster opp endringene til origin
+git checkout <commit number>
+	tar deg til tilstanden ved denne commit-en
 
+git checkout master
+	tar deg tilbake til nyeste tilstand
