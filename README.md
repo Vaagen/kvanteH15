@@ -1,6 +1,7 @@
 # kvanteH15
 Numeric solution to schrodinger equation
 
+test håkon
 
 
 git clone https://github.com/Vaagen/kvanteH15.git
