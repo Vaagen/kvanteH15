@@ -7,36 +7,45 @@
 //
 
 #include "Schrodinger2D.h"
+#include <string>
 
-
-
-double Lx = 1 * pow(10, -3);
-double Ly = 1 * pow(10, -3);
-int Nx = 1000;
-int Ny = 1000;
-double dx = Lx / Nx;
-double dy = Ly / Ny;
-double dt = dx * dx * 1/4;
-if (dy < dx){
-    dt = dy * dy * 1/4;
+using namespace std;
+//PUBLIC MEMBER FUNCTIONS
+void Schrodinger2D::run(){
+    
 }
-int Nt = 1000;
-double hbar = 1.0545718 * pow(10, -34);
+
+void Schrodinger2D::makeInitCondition(){
+    
+}
+
+void Schrodinger2D::contSim(string filename, unsigned int numOfTimesteps){
+    
+}
+
+//PRIVATE MEMBER FUNCTIONS
+void Schrodinger2D::setV(Potential type){
+    switch (type) {
+        case FREE:
+            for (int x = 0; x < Nx; x++){
+                for (int y = 0; y < Ny; y++){
+                    V[Nx*y+x] = 0;
+                }
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void Schrodinger2D::initState(string type){
+    
+}
+
+void Schrodinger2D::finiteDifference(){
+    
 }
 /*
- Lx = 1e-3
- Ly = 1e-3
- Nx = 1000
- Ny= 1000
- dx = Lx / Nx
- dy = Ly / Ny
- dt = min([dx, dy])**2 * 1/4
- t = 0
- Nt = 1000
- hbar = 1.0545718e-34
- m = 10e-30
- V = np.zeros((Nx, Ny))
- V = setV(V)
  
  psi_r = np.zeros((Nx, Ny, Nt))
  psi_i = np.zeros((Nx, Ny, Nt))
