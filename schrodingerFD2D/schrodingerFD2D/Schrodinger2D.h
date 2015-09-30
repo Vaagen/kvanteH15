@@ -19,7 +19,7 @@ using namespace std;
 
 enum Potential{FREE};
 enum Situation{FREE_ELECTRON};
-vector<string> situationString{"free_electron"};
+static vector<string> situationString{"free_electron"};
 enum ProbDistrb{GAUSSIAN}; //probability distribution for initial position
 
 
@@ -37,6 +37,8 @@ public:
     // continue previous simulation
     void contSim(string filename, unsigned int numOfTimesteps);
     
+    Schrodinger2D();
+    ~Schrodinger2D();
 private:
 // VARIABLES FOR SIMULATION
     const double hbar = 1.0545718 * pow(10, -34);

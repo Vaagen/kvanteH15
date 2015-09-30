@@ -9,6 +9,7 @@
 #include "Schrodinger2D.h"
 
 using namespace std;
+
 //PUBLIC MEMBER FUNCTIONS
 void Schrodinger2D::run(){
     int choice = -1;
@@ -18,6 +19,7 @@ void Schrodinger2D::run(){
             cout << i + 1 << ". " << situationString[i] << endl;
         }
         cin >> choice;
+        choice -= 1;
     }
     runSituation(static_cast<Situation>(choice));
     
@@ -60,11 +62,23 @@ void Schrodinger2D::runSituation(Situation situation){
 }
 
 void Schrodinger2D::contSim(string filename, unsigned int numOfTimesteps){
-    
+}
+
+Schrodinger2D::Schrodinger2D(){
+    V = nullptr;
+    psi_r = nullptr;
+    psi_i = nullptr;
+}
+
+Schrodinger2D::~Schrodinger2D(){
+    delete [] V;
+    delete [] psi_r;
+    delete [] psi_i;
 }
 
 //PRIVATE MEMBER FUNCTIONS
 void Schrodinger2D::setV(){
+    V = new double [Nx * Ny];
     switch (potential) {
         case FREE:
             for (int x = 0; x < Nx; x++){
