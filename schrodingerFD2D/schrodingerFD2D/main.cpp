@@ -7,7 +7,10 @@
 //
 
 #include <iostream>
-#include <cmath>
+#include "Schrodinger2D.h"
+using namespace std;
 
 int main(int argc, const char * argv[]) {
+    Schrodinger2D s2d;
+    s2d.run();
 }
