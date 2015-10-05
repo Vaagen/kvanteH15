@@ -82,6 +82,12 @@ private:
     
     // calculating the time evolution and storing it in a tekst file
     void finiteDifference();
+    
+    void finiteDifference1D();
+    
+    void finiteDifference2D();
+    
+    void finiteDifference3D();
 };
 
 
