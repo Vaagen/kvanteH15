@@ -32,6 +32,12 @@ public:
     // continue previous simulation
     void contSim(string filename, unsigned int numOfTimesteps);
     
+    // sets the referanse potential
+    void setV0(double V0){this->V0 = V0;}
+    
+    // sets the referanse width
+    void setVThickness(double VThickness){this->VThickness = VThickness;}
+    
     Schrodinger();
     ~Schrodinger();
 private:
@@ -55,6 +61,8 @@ private:
     double startX1;
     double startX2;
     double startX3;
+    double V0;
+    double VThickness;
     
     Potential potential;
     Situation situation;
@@ -69,8 +77,10 @@ private:
     unsigned int plotDensityT; //steps between t plotted
     
     double* V;
-    double* psi_r; //real part of wave function
-    double* psi_i; //imagenary part of wave funciton
+    double* psi_r1; //real part of wave function
+    double* psi_i1; //imagenary part of wave funciton
+    double* psi_r2; //real part of wave function
+    double* psi_i2; //imagenary part of wave funciton
 
     
 // MEMBER FUNCTIONS

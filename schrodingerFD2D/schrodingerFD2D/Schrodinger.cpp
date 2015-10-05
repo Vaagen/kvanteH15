@@ -20,12 +20,6 @@ void Schrodinger::run(Situation situation, string filename){
     Nx1 = 1000;
     Nx2 = 1000;
     Nx3 = 1000;
-    if (numOfDim == 1){
-        Nx2 = 1;
-        Nx3 = 1;
-    } else if (numOfDim == 2){
-        Nx3 = 1;
-    }
     Nt = 1000;
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
@@ -39,7 +33,11 @@ void Schrodinger::run(Situation situation, string filename){
     plotDensityX1 = 1;
     plotDensityX2 = 1;
     plotDensityT = 50;
+    V0 = 1;
+    VThickness = 1;
     
+    // set the situation
+    // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
             numOfDim = 1;
@@ -53,6 +51,20 @@ void Schrodinger::run(Situation situation, string filename){
         default:
             break;
     }
+    
+    if (numOfDim == 1){
+        Nx2 = 1;
+        Nx3 = 1;
+    } else if (numOfDim == 2){
+        Nx3 = 1;
+    }
+    
+    V = new double [Nx1 * Nx2 * Nx3];
+    psi_r1 = new double [Nx1 * Nx2 * Nx3];
+    psi_i1 = new double [Nx1 * Nx2 * Nx3];
+    psi_r2 = new double [Nx1 * Nx2 * Nx3];
+    psi_i2 = new double [Nx1 * Nx2 * Nx3];
+    
     setV();
     makeInitState();
     finiteDifference();
@@ -63,19 +75,22 @@ void Schrodinger::contSim(string filename, unsigned int numOfTimesteps){
 
 Schrodinger::Schrodinger(){
     V = nullptr;
-    psi_r = nullptr;
-    psi_i = nullptr;
+    psi_r1 = nullptr;
+    psi_i1 = nullptr;
+    psi_r2 = nullptr;
+    psi_i2 = nullptr;
 }
 
 Schrodinger::~Schrodinger(){
     delete [] V;
-    delete [] psi_r;
-    delete [] psi_i;
+    delete [] psi_r1;
+    delete [] psi_i1;
+    delete [] psi_r2;
+    delete [] psi_i2;
 }
 
 //PRIVATE MEMBER FUNCTIONS
 void Schrodinger::setV(){
-    //ofstream ofs( "atest.txt", ios::binary );
     V = new double [Nx1 * Nx2 * Nx3];
     switch (potential) {
         case FREE:
@@ -93,14 +108,12 @@ void Schrodinger::setV(){
 }
 
 void Schrodinger::makeInitState(){
-    psi_r = new double [Nx1 * Nx2 * Nt];
-    psi_i = new double [Nx1 * Nx2 * Nt];
     switch (probDistrb) {
         case GAUSSIAN_2D:
             for (int i = 0; i < Nx1; i++){
                 for (int j = 0; j < Nx2; j++){
-                    psi_r[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx1 * j - startX2, 2) / (2 * SDx2)) * cos(p * (dx1 * i));
-                    psi_i[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx2 * j - startX2, 2) / (2 * SDx2)) * sin(p * (dx1 * i));
+                    psi_r1[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx1 * j - startX2, 2) / (2 * SDx2)) * cos(p * (dx1 * i));
+                    psi_i1[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx2 * j - startX2, 2) / (2 * SDx2)) * sin(p * (dx1 * i));
                 }
             }
             break;

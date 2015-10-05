@@ -12,7 +12,7 @@ using namespace std;
 
 int main(int argc, const char * argv[]) {
     int a = 1000;
-    int b = 4000;
+    int b = 1000;
     int c = 1000;
     double* test = new double [a*b*c];
     for (int i = 0; i < a; i++){
