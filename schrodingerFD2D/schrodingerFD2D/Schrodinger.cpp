@@ -128,11 +128,20 @@ void Schrodinger::setVtoZero(){
 
 void Schrodinger::makeInitState(){
     switch (probDistrb) {
+        case GAUSSIAN_1D:
+            for (int x1 = 0; x1 < Nx1; x1++){
+                psi_r1[x1] = exp(-pow(dx1 * x1 - startX1, 2) / (2 * SDx1));
+                psi_r2[x1] = 0;
+                psi_i1[x1] = exp(-pow(dx1 * x1 - startX1, 2) / (2 * SDx1));
+                psi_i2[x1] = 0;
+            }
         case GAUSSIAN_2D:
-            for (int i = 0; i < Nx1; i++){
-                for (int j = 0; j < Nx2; j++){
-                    psi_r1[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx1 * j - startX2, 2) / (2 * SDx2)) * cos(p * (dx1 * i));
-                    psi_i1[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx2 * j - startX2, 2) / (2 * SDx2)) * sin(p * (dx1 * i));
+            for (int x1 = 0; x1 < Nx1; x1++){
+                for (int x2 = 0; x2 < Nx2; x2++){
+                    psi_r1[x1 * Nx2 + x2] = exp(-pow(dx1 * x1 - startX1, 2) / (2 * SDx1) - pow(dx1 * x2 - startX2, 2) / (2 * SDx2)) * cos(p * (dx1 * x1));
+                    psi_r2[x1 * Nx2 + x2] = 0;
+                    psi_i1[x1 * Nx2 + x2] = exp(-pow(dx1 * x1 - startX1, 2) / (2 * SDx1) - pow(dx2 * x2 - startX2, 2) / (2 * SDx2)) * sin(p * (dx1 * x1));
+                    psi_i2[x1 * Nx2 + x2] = 0;
                 }
             }
             break;
@@ -153,9 +162,14 @@ void Schrodinger::finiteDifference(){
 }
 
 void Schrodinger::finiteDifference1D(){
+    double c1 = dt * hbar * hbar / 2 / m / dx1 / dx1;
+    double c2 = dt / hbar;
     for (int t = 0; t < Nt; t++){
         for (int x = 1; x < Nx1 - 1; x++){
-            psi_r2[ =
+            psi_r2[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i1[x] - c1 * psi_i1[x + 1] - c1 * psi_i1[x - 1];
+            psi_i2[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_i1[x] + c1 * psi_i1[x + 1] + c1 * psi_i1[x - 1];
+            psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * psi_i2[x + 1] - c1 * psi_i2[x - 1];
+            psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_i2[x] + c1 * psi_i2[x + 1] + c1 * psi_i2[x - 1];
         }
     }
 }
