@@ -1,56 +1,47 @@
 //
-//  Schrodinger2D.cpp
-//  schrodingerFD2D
+//  Schrodinger.cpp
+//  schrodingerFD
 //
 //  Created by Håkon Austlid Taskén on 30.09.15.
 //  Copyright (c) 2015 Håkon Austlid Taskén. All rights reserved.
 //
 
-#include "Schrodinger2D.h"
+#include "Schrodinger.h"
 
 using namespace std;
 
 //PUBLIC MEMBER FUNCTIONS
-void Schrodinger2D::run(){
-    int choice = -1;
-    while (choice < 0 || choice >= situationString.size()){
-        cout << "Choose a number correspolding to the situation you would like to simulate:" << endl;
-        for (int i = 0; i < situationString.size(); i++){
-            cout << i + 1 << ". " << situationString[i] << endl;
-        }
-        cin >> choice;
-        choice -= 1;
-    }
-    runSituation(static_cast<Situation>(choice));
-    
-}
-
-void Schrodinger2D::runSituation(Situation situation){
-    // standard settings (you should generly override these in you 'Situation' unless it is benifitial to change them in all situations)
-    Lx = 0.001;
-    Ly = 0.001;
-    Nx = 1000;
-    Ny = 1000;
+void Schrodinger::run(Situation situation, string filename){
+    // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
+    numOfDim = 1;
+    Lx1 = 0.001;
+    Lx2 = 0.001;
+    Lx3 = 0.001;
+    Nx1 = 1000;
+    Nx2 = 1000;
+    Nx3 = 1000;
     Nt = 1000;
-    dx = Lx / Nx;
-    dy = Ly / Ny;
-    dt = 1/4 * pow((Lx / Nx),2);
-    if (Ly / Ny < Lx / Nx){
-        dt = 1/4 * pow((Ly / Ny),2);
+    dx1 = Lx1 / Nx1;
+    dx2 = Lx2 / Nx2;
+    dx3 = Lx3 / Nx3;
+    dt = 1/4 * pow((Lx1 / Nx1),2);
+    if (Lx2 / Nx2 < Lx1 / Nx1){
+        dt = 1/4 * pow((Lx2 / Nx2),2);
     }
-    startX = Lx / 4;
-    startY = Ly / 2;
-    plotDensityX = 1;
-    plotDensityY = 1;
+    startX1 = Lx1 / 4;
+    startX2 = Lx2 / 2;
+    plotDensityX1 = 1;
+    plotDensityX2 = 1;
     plotDensityT = 50;
     
     switch (situation) {
-        case FREE_ELECTRON:
+        case FREE_ELECTRON_1D:
+            numOfDim = 1;
             m = pow(10, -30);
             potential = FREE;
-            probDistrb = GAUSSIAN;
-            SDx = 1;
-            SDy = 1;
+            probDistrb = GAUSSIAN_1D;
+            SDx1 = 1;
+            SDx2 = 1;
             p = 10;
             break;
         default:
@@ -61,29 +52,29 @@ void Schrodinger2D::runSituation(Situation situation){
     finiteDifference();
 }
 
-void Schrodinger2D::contSim(string filename, unsigned int numOfTimesteps){
+void Schrodinger::contSim(string filename, unsigned int numOfTimesteps){
 }
 
-Schrodinger2D::Schrodinger2D(){
+Schrodinger::Schrodinger(){
     V = nullptr;
     psi_r = nullptr;
     psi_i = nullptr;
 }
 
-Schrodinger2D::~Schrodinger2D(){
+Schrodinger::~Schrodinger(){
     delete [] V;
     delete [] psi_r;
     delete [] psi_i;
 }
 
 //PRIVATE MEMBER FUNCTIONS
-void Schrodinger2D::setV(){
-    V = new double [Nx * Ny];
+void Schrodinger::setV(){
+    V = new double [Nx1 * Nx2];
     switch (potential) {
         case FREE:
-            for (int x = 0; x < Nx; x++){
-                for (int y = 0; y < Ny; y++){
-                    V[Nx*y+x] = 0;
+            for (int x = 0; x < Nx1; x++){
+                for (int y = 0; y < Nx2; y++){
+                    V[Nx1*y+x] = 0;
                 }
             }
             break;
@@ -92,15 +83,15 @@ void Schrodinger2D::setV(){
     }
 }
 
-void Schrodinger2D::makeInitState(){
-    psi_r = new double [Nx * Ny * Nt];
-    psi_i = new double [Nx * Ny * Nt];
+void Schrodinger::makeInitState(){
+    psi_r = new double [Nx1 * Nx2 * Nt];
+    psi_i = new double [Nx1 * Nx2 * Nt];
     switch (probDistrb) {
-        case GAUSSIAN:
-            for (int i = 0; i < Nx; i++){
-                for (int j = 0; j < Ny; j++){
-                    psi_r[i * Ny + j] = exp(-pow(dx * i - startX, 2) / (2 * SDx) - pow(dy * j - startY, 2) / (2 * SDy)) * cos(p * (dx * i));
-                    psi_i[i * Ny + j] = exp(-pow(dx * i - startX, 2) / (2 * SDx) - pow(dy * j - startY, 2) / (2 * SDy)) * sin(p * (dx * i));
+        case GAUSSIAN_2D:
+            for (int i = 0; i < Nx1; i++){
+                for (int j = 0; j < Nx2; j++){
+                    psi_r[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx1 * j - startX2, 2) / (2 * SDx2)) * cos(p * (dx1 * i));
+                    psi_i[i * Nx2 + j] = exp(-pow(dx1 * i - startX1, 2) / (2 * SDx1) - pow(dx2 * j - startX2, 2) / (2 * SDx2)) * sin(p * (dx1 * i));
                 }
             }
             break;
@@ -110,13 +101,13 @@ void Schrodinger2D::makeInitState(){
     }
 }
 
-void Schrodinger2D::finiteDifference(){
+void Schrodinger::finiteDifference(){
     
 }
 /*
  
- psi_r = np.zeros((Nx, Ny, Nt))
- psi_i = np.zeros((Nx, Ny, Nt))
+ psi_r = np.zeros((Nx1, Nx12, Nt))
+ psi_i = np.zeros((Nx1, Nx12, Nt))
  P = np.zeros(Nt)
  
  c1x = hbar * dt / 2 / m / dx**2
@@ -128,20 +119,20 @@ void Schrodinger2D::finiteDifference(){
  ax = fig.gca(projection='3d')
  
  nthplt = 10
- X = np.arange(1, Nx-1, nthplt)
- Y = np.arange(1, Ny-1, nthplt)
+ X = np.arange(1, Nx1-1, nthplt)
+ Y = np.arange(1, Nx12-1, nthplt)
  X, Y = np.meshgrid(X, Y)
  while i < Nt - 1:
- psi_r[1:Nx-1, 1:Ny-1, i + 1] = psi_r[1:Nx-1, 1:Ny-1, i] - \
- c1x * (psi_i[2:Nx, 1:Ny-1, i] + psi_i[0:Nx-2, 1:Ny-1, i]) - \
- c1y * (psi_i[1:Nx-1, 2:Ny, i] + psi_i[1:Nx-1, 0:Ny-2, i]) + \
- c2V[1:Nx-1, 1:Ny-1] * psi_i[1:Nx-1, 1:Ny-1, i]
- psi_i[1:Nx-1, 1:Ny-1, i + 1] = psi_i[1:Nx-1, 1:Ny-1, i] + \
- c1x * (psi_r[2:Nx, 1:Ny-1, i] + psi_r[0:Nx-2, 1:Ny-1, i]) + \
- c1y * (psi_r[1:Nx-1, 2:Ny, i] + psi_r[1:Nx-1, 0:Ny-2, i]) - \
- c2V[1:Nx-1, 1:Ny-1] * psi_r[1:Nx-1, 1:Ny-1, i]
+ psi_r[1:Nx1-1, 1:Nx12-1, i + 1] = psi_r[1:Nx1-1, 1:Nx12-1, i] - \
+ c1x * (psi_i[2:Nx1, 1:Nx12-1, i] + psi_i[0:Nx1-2, 1:Nx12-1, i]) - \
+ c1y * (psi_i[1:Nx1-1, 2:Nx12, i] + psi_i[1:Nx1-1, 0:Nx12-2, i]) + \
+ c2V[1:Nx1-1, 1:Nx12-1] * psi_i[1:Nx1-1, 1:Nx12-1, i]
+ psi_i[1:Nx1-1, 1:Nx12-1, i + 1] = psi_i[1:Nx1-1, 1:Nx12-1, i] + \
+ c1x * (psi_r[2:Nx1, 1:Nx12-1, i] + psi_r[0:Nx1-2, 1:Nx12-1, i]) + \
+ c1y * (psi_r[1:Nx1-1, 2:Nx12, i] + psi_r[1:Nx1-1, 0:Nx12-2, i]) - \
+ c2V[1:Nx1-1, 1:Nx12-1] * psi_r[1:Nx1-1, 1:Nx12-1, i]
  if i % 50 == 49:
- surf = ax.plot_surface(X, Y, psi_r[1:Nx-1:nthplt, 1:Ny-1:nthplt, i + 1], rstride=1, cstride=1, cmap=cm.coolwarm,
+ surf = ax.plot_surface(X, Y, psi_r[1:Nx1-1:nthplt, 1:Nx12-1:nthplt, i + 1], rstride=1, cstride=1, cmap=cm.coolwarm,
  linewidth=0, antialiased=False)
  plt.draw()
  print i

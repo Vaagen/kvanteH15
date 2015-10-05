@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FEE1BBCA1BBC156D00B4C7DE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1BBC91BBC156D00B4C7DE /* main.cpp */; };
-		FEE1BBD81BBC39E100B4C7DE /* Schrodinger2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1BBD61BBC39E100B4C7DE /* Schrodinger2D.cpp */; };
+		FEE1BBD81BBC39E100B4C7DE /* Schrodinger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +26,8 @@
 /* Begin PBXFileReference section */
 		FEE1BBC61BBC156D00B4C7DE /* schrodingerFD2D */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = schrodingerFD2D; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEE1BBC91BBC156D00B4C7DE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		FEE1BBD61BBC39E100B4C7DE /* Schrodinger2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Schrodinger2D.cpp; sourceTree = "<group>"; };
-		FEE1BBD71BBC39E100B4C7DE /* Schrodinger2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Schrodinger2D.h; sourceTree = "<group>"; };
+		FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Schrodinger.cpp; sourceTree = "<group>"; };
+		FEE1BBD71BBC39E100B4C7DE /* Schrodinger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Schrodinger.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,7 @@
 		FEE1BBBD1BBC156C00B4C7DE = {
 			isa = PBXGroup;
 			children = (
-				FEE1BBC81BBC156D00B4C7DE /* schrodingerFD2D */,
+				FEE1BBC81BBC156D00B4C7DE /* schrodingerFD */,
 				FEE1BBC71BBC156D00B4C7DE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,13 +57,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FEE1BBC81BBC156D00B4C7DE /* schrodingerFD2D */ = {
+		FEE1BBC81BBC156D00B4C7DE /* schrodingerFD */ = {
 			isa = PBXGroup;
 			children = (
 				FEE1BBC91BBC156D00B4C7DE /* main.cpp */,
-				FEE1BBD61BBC39E100B4C7DE /* Schrodinger2D.cpp */,
-				FEE1BBD71BBC39E100B4C7DE /* Schrodinger2D.h */,
+				FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */,
+				FEE1BBD71BBC39E100B4C7DE /* Schrodinger.h */,
 			);
+			name = schrodingerFD;
 			path = schrodingerFD2D;
 			sourceTree = "<group>";
 		};
@@ -123,7 +124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FEE1BBD81BBC39E100B4C7DE /* Schrodinger2D.cpp in Sources */,
+				FEE1BBD81BBC39E100B4C7DE /* Schrodinger.cpp in Sources */,
 				FEE1BBCA1BBC156D00B4C7DE /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
