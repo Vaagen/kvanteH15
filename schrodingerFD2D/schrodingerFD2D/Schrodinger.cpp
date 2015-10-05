@@ -98,10 +98,12 @@ void Schrodinger::setV(){
             break;
         case CONST_BARRIER_1D:
             setVtoZero();
-            
+            for (int x1 = (Nx1/2 - VThickness*dx1); x1 < Nx1/2 + VThickness; x1++){
+                V[x1] = V0;
+            }
             break;
         case CONST_BARRIER_2D:
-            setVtoZero(); // Hello
+            setVtoZero();
             break;
         default:
             break;
