@@ -75,6 +75,7 @@ Schrodinger::~Schrodinger(){
 
 //PRIVATE MEMBER FUNCTIONS
 void Schrodinger::setV(){
+    //ofstream ofs( "atest.txt", ios::binary );
     V = new double [Nx1 * Nx2 * Nx3];
     switch (potential) {
         case FREE:
