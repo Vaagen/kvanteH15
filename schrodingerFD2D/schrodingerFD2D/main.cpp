@@ -13,8 +13,9 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     int a = 1000;
     int b = 1000;
-    int c = 1;
+    int c = 10;
     double test[a][b][c];
+    /*
     for (int i = 0; i < a; i++){
         for (int j = 0; j < b; j++){
             for (int k = 0; k < c; k++){
@@ -22,5 +23,7 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
+    */
+    test[500][500][2] = 2;
     cout << "yes" << endl;
 }

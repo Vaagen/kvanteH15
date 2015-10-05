@@ -20,6 +20,12 @@ void Schrodinger::run(Situation situation, string filename){
     Nx1 = 1000;
     Nx2 = 1000;
     Nx3 = 1000;
+    if (numOfDim == 1){
+        Nx2 = 1;
+        Nx3 = 1;
+    } else if (numOfDim == 2){
+        Nx3 = 1;
+    }
     Nt = 1000;
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
@@ -75,7 +81,7 @@ void Schrodinger::setV(){
             for (int x1 = 0; x1 < Nx1; x1++){
                 for (int x2 = 0; x2 < Nx2; x2++){
                     for (int x3 = 0; x3 < Nx3; x3++){
-                     V[Nx1*Nx2*x3+Nx1*x2+x1] = 0;
+                        V[Nx1*Nx2*x3+Nx1*x2+x1] = 0;
                     }
                 }
             }
@@ -104,8 +110,27 @@ void Schrodinger::makeInitState(){
 }
 
 void Schrodinger::finiteDifference(){
+    if (numOfDim == 1){
+        finiteDifference1D();
+    } else if (numOfDim == 2){
+        finiteDifference2D();
+    } else {
+        finiteDifference3D();
+    }
+}
+
+void Schrodinger::finiteDifference1D(){
     
 }
+
+void Schrodinger::finiteDifference2D(){
+    
+}
+
+void Schrodinger::finiteDifference3D(){
+    
+}
+
 /*
  
  psi_r = np.zeros((Nx1, Nx12, Nt))
