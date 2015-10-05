@@ -1,0 +1,10 @@
+INFO.txt - contains info about functions, objects and variables in
+ Schrodinger.h and Schrodinger.cpp
+
+
+
+enum Potential
+	FREE - Potential equal to zero everywhere
+	CONST_BARRIER_1D - Potential equal to zero everywhere, 
+		exept for middle of system, where it is equal to V0 
+		in an interval of width Vthickness.
