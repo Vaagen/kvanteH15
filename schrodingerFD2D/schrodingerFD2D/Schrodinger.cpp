@@ -101,7 +101,7 @@ void Schrodinger::setV(){
             
             break;
         case CONST_BARRIER_2D:
-            setVtoZero();
+            setVtoZero(); // Hello
             break;
         default:
             break;
