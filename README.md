@@ -37,3 +37,7 @@ git checkout <commit number>
 
 git checkout master
 	tar deg tilbake til nyeste tilstand
+
+git fetch
+git reset --hard origin
+	Disse to i kombinasjon fjerner det du har og tar over Origin slik den er nå
