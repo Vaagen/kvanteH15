@@ -94,16 +94,26 @@ void Schrodinger::setV(){
     V = new double [Nx1 * Nx2 * Nx3];
     switch (potential) {
         case FREE:
-            for (int x1 = 0; x1 < Nx1; x1++){
-                for (int x2 = 0; x2 < Nx2; x2++){
-                    for (int x3 = 0; x3 < Nx3; x3++){
-                        V[Nx1*Nx2*x3+Nx1*x2+x1] = 0;
-                    }
-                }
-            }
+            setVtoZero();
+            break;
+        case CONST_BARRIER_1D:
+            setVtoZero();
+            
+            break;
+        case CONST_BARRIER_2D:
             break;
         default:
             break;
+    }
+}
+
+void Schrodinger::setVtoZero(){
+    for (int x1 = 0; x1 < Nx1; x1++){
+        for (int x2 = 0; x2 < Nx2; x2++){
+            for (int x3 = 0; x3 < Nx3; x3++){
+                V[Nx1*Nx2*x3+Nx1*x2+x1] = 0;
+            }
+        }
     }
 }
 

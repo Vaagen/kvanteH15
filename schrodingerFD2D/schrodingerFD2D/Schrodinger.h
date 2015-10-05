@@ -17,7 +17,7 @@
 
 using namespace std;
 
-enum Potential{FREE};
+enum Potential{FREE,CONST_BARRIER_1D,CONST_BARRIER_2D};
 enum Situation{FREE_ELECTRON_1D};
 enum ProbDistrb{GAUSSIAN_1D, GAUSSIAN_2D}; //probability distribution for initial position
 
@@ -86,6 +86,8 @@ private:
 // MEMBER FUNCTIONS
     // spesifies the potential
     void setV();
+    // sets V to zero everywhere
+    void setVtoZero();
     
     // setting initial state
     void makeInitState();
