@@ -7,12 +7,14 @@
 //
 
 #include "Schrodinger.h"
+#include <fstream>
 
 using namespace std;
 
 //PUBLIC MEMBER FUNCTIONS
 void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
+    this->filename = filename;
     numOfDim = 1;
     Lx1 = 0.001;
     Lx2 = 0.001;
@@ -162,6 +164,7 @@ void Schrodinger::finiteDifference(){
 }
 
 void Schrodinger::finiteDifference1D(){
+    ofstream plotFile(filename.append("_plot"), ios::binary );
     double c1 = dt * hbar * hbar / 2 / m / dx1 / dx1;
     double c2 = dt / hbar;
     for (int t = 0; t < Nt; t++){
@@ -171,7 +174,23 @@ void Schrodinger::finiteDifference1D(){
             psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * psi_i2[x + 1] - c1 * psi_i2[x - 1];
             psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_i2[x] + c1 * psi_i2[x + 1] + c1 * psi_i2[x - 1];
         }
+        if (t % plotDensityT == 0){
+            for (int x = 0; x < Nx1; x += plotDensityX1){
+                plotFile.write(reinterpret_cast<char*>(&psi_r1[x]), sizeof(psi_r1[x]));
+                plotFile.write(reinterpret_cast<char*>(&psi_i1[x]), sizeof(psi_r1[x]));
+                double possibility = psi_r1[x] * psi_r1[x] + psi_i1[x] * psi_i1[x];
+                plotFile.write(reinterpret_cast<char*>(&possibility), sizeof(possibility));
+            }
+        }
     }
+    plotFile.close();
+    ofstream finalStateFile(filename.append("_finalState"), ios::binary );
+    for (int x = 0; x < Nx1; x++){
+        plotFile.write(reinterpret_cast<char*>(&psi_r1[x]), sizeof(psi_r1[x]));
+        plotFile.write(reinterpret_cast<char*>(&psi_i1[x]), sizeof(psi_r1[x]));
+    }
+    finalStateFile.close();
+    writeVariablesToFile();
 }
 
 void Schrodinger::finiteDifference2D(){
@@ -182,6 +201,10 @@ void Schrodinger::finiteDifference3D(){
     
 }
 
+void Schrodinger::writeVariablesToFile(){
+    ofstream finalStateFile(filename.append("_finalState.txt"));
+    finalStateFile << Lx1 << " " << Lx2 ; // ...
+}
 /*
  
  psi_r = np.zeros((Nx1, Nx12, Nt))

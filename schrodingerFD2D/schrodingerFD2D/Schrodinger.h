@@ -43,7 +43,8 @@ public:
 private:
 // VARIABLES FOR SIMULATION
     const double hbar = 1.0545718 * pow(10, -34);
-
+    
+    string filename;
     unsigned int numOfDim;
     double Lx1;
     double Lx2;
@@ -100,6 +101,8 @@ private:
     void finiteDifference2D();
     
     void finiteDifference3D();
+    
+    void writeVariablesToFile();
 };
 
 
