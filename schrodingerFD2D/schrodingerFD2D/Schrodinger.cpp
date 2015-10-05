@@ -75,12 +75,14 @@ Schrodinger::~Schrodinger(){
 
 //PRIVATE MEMBER FUNCTIONS
 void Schrodinger::setV(){
-    V = new double [Nx1 * Nx2];
+    V = new double [Nx1 * Nx2 * Nx3];
     switch (potential) {
         case FREE:
-            for (int x = 0; x < Nx1; x++){
-                for (int y = 0; y < Nx2; y++){
-                    V[Nx1*y+x] = 0;
+            for (int x1 = 0; x1 < Nx1; x1++){
+                for (int x2 = 0; x2 < Nx2; x2++){
+                    for (int x3 = 0; x3 < Nx3; x3++){
+                        V[Nx1*Nx2*x3+Nx1*x2+x1] = 0;
+                    }
                 }
             }
             break;
