@@ -61,8 +61,8 @@ private:
     double startX1;
     double startX2;
     double startX3;
-    double V0;
-    double VThickness;
+    double V0; // referance potential
+    double VThickness; // referance thickness 
     
     Potential potential;
     Situation situation;

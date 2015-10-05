@@ -21,15 +21,6 @@ void Schrodinger::run(Situation situation, string filename){
     Nx2 = 1000;
     Nx3 = 1000;
     Nt = 1000;
-    dx1 = Lx1 / Nx1;
-    dx2 = Lx2 / Nx2;
-    dx3 = Lx3 / Nx3;
-    dt = 1/4 * pow((Lx1 / Nx1),2);
-    if (Lx2 / Nx2 < Lx1 / Nx1){
-        dt = 1/4 * pow((Lx2 / Nx2),2);
-    }
-    startX1 = Lx1 / 4;
-    startX2 = Lx2 / 2;
     plotDensityX1 = 1;
     plotDensityX2 = 1;
     plotDensityT = 50;
@@ -58,6 +49,15 @@ void Schrodinger::run(Situation situation, string filename){
     } else if (numOfDim == 2){
         Nx3 = 1;
     }
+    dx1 = Lx1 / Nx1;
+    dx2 = Lx2 / Nx2;
+    dx3 = Lx3 / Nx3;
+    dt = 1/4 * pow((Lx1 / Nx1),2); // should be calculated some other way dependent on error calculations
+    if (Lx2 / Nx2 < Lx1 / Nx1){
+        dt = 1/4 * pow((Lx2 / Nx2),2);
+    }
+    startX1 = Lx1 / 4;
+    startX2 = Lx2 / 2;
     
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
@@ -134,7 +134,11 @@ void Schrodinger::finiteDifference(){
 }
 
 void Schrodinger::finiteDifference1D(){
-    
+    for (int t = 0; t < Nt; t++){
+        for (int x = 1; x < Nx1 - 1; x++){
+            psi_r2[ =
+        }
+    }
 }
 
 void Schrodinger::finiteDifference2D(){
