@@ -108,7 +108,7 @@ void Schrodinger::setV(){
             setVtoZero();
             for (int x1 = (Nx1/2 - VThickness*dx1); x1 < Nx1/2 + VThickness; x1++){
                 for (int x2 = 0; x2 < Nx2; x2++){
-                        V[Nx1*Nx2+Nx1*x2+x1] = 0;
+                        V[Nx1*x2+x1] = V0;
                 }
             }
             
