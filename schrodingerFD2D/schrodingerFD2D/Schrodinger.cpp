@@ -202,8 +202,8 @@ void Schrodinger::finiteDifference3D(){
 }
 
 void Schrodinger::writeVariablesToFile(){
-    ofstream finalStateFile(filename.append("_finalState.txt"));
-    finalStateFile << Lx1 << " " << Lx2 ; // ...
+    ofstream finalStateFile(filename.append("_variables.txt"));
+    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << potential << endl << situation << endl << probDistrb << endl << SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << plotDensityT << endl;
 }
 /*
  
