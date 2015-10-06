@@ -18,7 +18,7 @@
 using namespace std;
 
 enum Potential{FREE,CONST_BARRIER_1D,CONST_BARRIER_2D};
-enum Situation{FREE_ELECTRON_1D};
+enum Situation{FREE_ELECTRON_1D, FREE_ELECTRON_2D, ELECTRON_CONST_BARRIER_1D, ELECTRON_CONST_BARRIER_2D};
 enum ProbDistrb{GAUSSIAN_1D, GAUSSIAN_2D}; //probability distribution for initial position
 
 
