@@ -10,7 +10,6 @@
 #include "Schrodinger.h"
 using namespace std;
 
-int main(int argc, const char * argv[]) {
-    Schrodinger s;
+int main(int argc, const char * argv[]) {    Schrodinger s;
     s.run(FREE_ELECTRON_1D, "test_free_electron");
 }

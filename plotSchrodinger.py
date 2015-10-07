@@ -50,6 +50,8 @@ m = float(line)
 line = variableFile.readline()
 p = float(line)
 line = variableFile.readline()
+k = float(line)
+line = variableFile.readline()
 startX1 = int(line)
 line = variableFile.readline()
 startX2 = int(line)
@@ -83,18 +85,25 @@ variableFile.close()
 
 # get data from plotFile
 dt = np.dtype("f8")
-plotFile = np.fromfile(find(fileName + "_plot"), dtype=dt)
-if numOfDim == 1:
-    plotFile = np.split(plotFile, 3) # only simulations for 1 dim store psi_r and psi_i in plotFile
+plotProbabilityFile = np.fromfile(find(fileName + "_plot_probability"), dtype=dt)
+plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
+plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 
+'''
+x = np.linspace(0,Lx1,Nx1/plotDensityX1)
+plt.plot(x, plotPsiRFile[0:Nx1/plotDensityX1], 'r.')
+plt.show()
+'''
+for i in range(0,Nt/plotDensityT):
+    print plotProbabilityFile[i*Nx1/plotDensityX1]
 
 fig = plt.figure()
-ax = plt.axes(xlim=(0, Lx1), ylim=(0, 1))
-line, = ax.plot([], [], lw=2)
+ax = plt.axes(xlim=(0, Lx1), ylim=(-1, 1))
+line, = ax.plot([], [], 'r')
 
 # initialization function: plot the background of each frame
 def init1D():
-    line.set_data([], [])
+    line.set_data([], [],)
     return line,
 
 def init2D():
@@ -105,9 +114,10 @@ def init3D():
     return
 
 # animation function.  This is called sequentially
-x1 = np.linspace(0,Lx1,Nx1)
+x1 = np.linspace(0,Lx1,Nx1/plotDensityX1)
 def animate1D(i):
-    line.set_data(x1, plotFile[0][Nx1*(i):Nx1*(i+1)], 'r') #, x1, plotData[1][i], 'g', x1, plotData[2][i], 'k')
+    line.set_data(x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+        #lin.x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
     return line,
 
 def animate2D(i):
@@ -120,11 +130,11 @@ def animate3D(i):
 # call the animator.  blit=True means only re-draw the parts that have changed.
 anim = None
 if numOfDim == 1:
-    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt, interval=20, blit=True)
+    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2:
-    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt, interval=20, blit=True)
+    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 3:
-    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt, interval=20, blit=True)
+    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 
 # save the animation as an mp4.  This requires ffmpeg or mencoder to be
 # installed.  The extra_args ensure that the x264 codec is used, so that
@@ -134,3 +144,4 @@ elif numOfDim == 3:
 #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
 plt.show()
+

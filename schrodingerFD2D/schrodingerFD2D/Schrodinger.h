@@ -59,6 +59,7 @@ private:
     double dt;
     double m;
     double p;
+    double k;
     double startX1;
     double startX2;
     double startX3;
