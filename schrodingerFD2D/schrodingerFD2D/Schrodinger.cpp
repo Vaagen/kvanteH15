@@ -48,6 +48,33 @@ void Schrodinger::run(Situation situation, string filename){
             SDx2 = 1;
             p = 10;
             break;
+        case FREE_ELECTRON_2D:
+            numOfDim = 2;
+            m = pow(10, -30);
+            potential = FREE;
+            probDistrb = GAUSSIAN_2D;
+            SDx1 = 1;
+            SDx2 = 1;
+            p = 10;
+            break;
+        case ELECTRON_CONST_BARRIER_1D:
+            numOfDim = 1;
+            m = pow(10, -30);
+            potential = CONST_BARRIER_1D;
+            probDistrb = GAUSSIAN_1D;
+            SDx1 = 1;
+            SDx2 = 1;
+            p = 10;
+            break;
+        case ELECTRON_CONST_BARRIER_2D:
+            numOfDim = 2;
+            m = pow(10, -30);
+            potential = CONST_BARRIER_2D;
+            probDistrb = GAUSSIAN_2D;
+            SDx1 = 1;
+            SDx2 = 1;
+            p = 10;
+            break;
         default:
             break;
     }
