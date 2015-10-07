@@ -17,8 +17,8 @@
 
 using namespace std;
 
-enum Potential{FREE,CONST_BARRIER_1D,CONST_BARRIER_2D};
 enum Situation{FREE_ELECTRON_1D};
+enum Potential{FREE,CONST_BARRIER_1D,CONST_BARRIER_2D};
 enum ProbDistrb{GAUSSIAN_1D, GAUSSIAN_2D}; //probability distribution for initial position
 
 
@@ -65,9 +65,10 @@ private:
     double V0; // referance potential
     double VThickness; // referance thickness
     
-    Potential potential;
     Situation situation;
+    Potential potential;
     ProbDistrb probDistrb;
+    
     double SDx1; // uncertity in position
     double SDx2; // uncertity in position
     double SDx3; // uncertity in position

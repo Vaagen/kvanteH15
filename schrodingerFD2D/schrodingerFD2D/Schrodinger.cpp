@@ -8,6 +8,7 @@
 
 #include "Schrodinger.h"
 #include <fstream>
+#include "float.h"
 
 using namespace std;
 
@@ -23,11 +24,17 @@ void Schrodinger::run(Situation situation, string filename){
     Nx2 = 1000;
     Nx3 = 1000;
     Nt = 1000;
-    plotDensityX1 = 1;
-    plotDensityX2 = 1;
-    plotDensityT = 50;
     V0 = 1;
     VThickness = 1;
+    
+    SDx1 = 1;
+    SDx2 = 1;
+    SDx3 = 1;
+    
+    plotDensityX1 = 1;
+    plotDensityX2 = 1;
+    plotDensityX3 = 1;
+    plotDensityT = 50;
     
     // set the situation
     // this is where you add new situations (along with adding i new situation in the enum Situation)
@@ -58,8 +65,13 @@ void Schrodinger::run(Situation situation, string filename){
     if (Lx2 / Nx2 < Lx1 / Nx1){
         dt = 1/4 * pow((Lx2 / Nx2),2);
     }
-    startX1 = Lx1 / 4;
-    startX2 = Lx2 / 2;
+    if (dt == 0){
+        dt = DBL_MIN;
+        cout << "Uses smallest possible double, but it is still to big to garante for the error." << endl;
+    }
+    startX1 = Nx1 / 4;
+    startX2 = Nx2 / 2;
+    startX3 = Nx3 / 2;
     
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
@@ -164,7 +176,7 @@ void Schrodinger::finiteDifference(){
 }
 
 void Schrodinger::finiteDifference1D(){
-    ofstream plotFile(filename.append("_plot"), ios::binary );
+    FILE* plotFile = fopen((filename + "_plot").c_str(), "wb");
     double c1 = dt * hbar * hbar / 2 / m / dx1 / dx1;
     double c2 = dt / hbar;
     for (int t = 0; t < Nt; t++){
@@ -176,20 +188,23 @@ void Schrodinger::finiteDifference1D(){
         }
         if (t % plotDensityT == 0){
             for (int x = 0; x < Nx1; x += plotDensityX1){
-                plotFile.write(reinterpret_cast<char*>(&psi_r1[x]), sizeof(psi_r1[x]));
-                plotFile.write(reinterpret_cast<char*>(&psi_i1[x]), sizeof(psi_r1[x]));
+                if (numOfDim == 1){
+                    fwrite(&psi_r1[x], sizeof(double), 1, plotFile);
+                    fwrite(&psi_i1[x], sizeof(double), 1, plotFile);
+                }
                 double possibility = psi_r1[x] * psi_r1[x] + psi_i1[x] * psi_i1[x];
-                plotFile.write(reinterpret_cast<char*>(&possibility), sizeof(possibility));
+                fwrite(&possibility, sizeof(double), 1, plotFile);
             }
         }
     }
-    plotFile.close();
-    ofstream finalStateFile(filename.append("_finalState"), ios::binary );
-    for (int x = 0; x < Nx1; x++){
-        plotFile.write(reinterpret_cast<char*>(&psi_r1[x]), sizeof(psi_r1[x]));
-        plotFile.write(reinterpret_cast<char*>(&psi_i1[x]), sizeof(psi_r1[x]));
-    }
-    finalStateFile.close();
+    fclose(plotFile);
+    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
+    fwrite(&psi_r1[0], sizeof(double), Nx1, finalStateFile);
+    fwrite(&psi_i1[0], sizeof(double), Nx1, finalStateFile);
+    fclose(finalStateFile);
+    FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
+    fwrite(&V[0], sizeof(double), Nx1, potentialFile);
+    fclose(potentialFile);
     writeVariablesToFile();
 }
 
@@ -202,8 +217,8 @@ void Schrodinger::finiteDifference3D(){
 }
 
 void Schrodinger::writeVariablesToFile(){
-    ofstream finalStateFile(filename.append("_variables.txt"));
-    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << potential << endl << situation << endl << probDistrb << endl << SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << plotDensityT << endl;
+    ofstream finalStateFile(filename + "_variables.txt");
+    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
 }
 /*
  
