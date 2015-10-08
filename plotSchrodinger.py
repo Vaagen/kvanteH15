@@ -12,6 +12,7 @@ matplotlib.use('TKAgg') # this is done to allow blit = True in FuncAnimation on 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import os
+import time
 
 # find location of file, 'name'
 def find(name):
@@ -92,19 +93,26 @@ plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 '''
 x = np.linspace(0,Lx1,Nx1/plotDensityX1)
 plt.plot(x, plotPsiRFile[0:Nx1/plotDensityX1], 'r.')
+plt.plot(x, plotPsiRFile[100*Nx1/plotDensityX1:(100+1)*Nx1/plotDensityX1], 'g.')
 plt.show()
 '''
-for i in range(0,Nt/plotDensityT):
-    print plotProbabilityFile[i*Nx1/plotDensityX1]
+
+# for i in range(0,Nt/plotDensityT):
+#    print plotProbabilityFile[i*Nx1/plotDensityX1 + 100]
 
 fig = plt.figure()
 ax = plt.axes(xlim=(0, Lx1), ylim=(-1, 1))
-line, = ax.plot([], [], 'r')
+probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
+psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
+psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
+plt.legend(loc = 'lower right')
+if numOfDim == 2:
+    probPlot, = ax.contourf([], [], [])
 
 # initialization function: plot the background of each frame
 def init1D():
-    line.set_data([], [],)
-    return line,
+    probPlot.set_data([], [],)
+    return probPlot
 
 def init2D():
     #plotData = ax.contourf([], [], [], 500)
@@ -113,14 +121,18 @@ def init2D():
 def init3D():
     return
 
-# animation function.  This is called sequentially
 x1 = np.linspace(0,Lx1,Nx1/plotDensityX1)
+x2 = np.linspace(0,Lx2,Nx2/plotDensityX2)
+x3 = np.linspace(0,Lx3,Nx3/plotDensityX3)
+# animation function.  This is called sequentially
 def animate1D(i):
-    line.set_data(x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-        #lin.x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    return line,
+    probPlot.set_data(x1, plotProbabilityFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+    psiRPlot.set_data(x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+    psiIPlot.set_data(x1, plotPsiIFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+    return probPlot, psiRPlot, psiIPlot
 
 def animate2D(i):
+    
     return
 
 def animate3D(i):
@@ -130,7 +142,7 @@ def animate3D(i):
 # call the animator.  blit=True means only re-draw the parts that have changed.
 anim = None
 if numOfDim == 1:
-    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2:
     anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 3:
@@ -143,5 +155,5 @@ elif numOfDim == 3:
 # http://matplotlib.sourceforge.net/api/animation_api.html
 #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
-plt.show()
-
+plt.show(block = False)
+plt.close()

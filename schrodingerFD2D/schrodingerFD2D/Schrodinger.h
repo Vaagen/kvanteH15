@@ -42,7 +42,7 @@ public:
     ~Schrodinger();
 private:
 // VARIABLES FOR SIMULATION
-    const double hbar = 1.0545718 * pow(10, -34);
+    const double hbar = 1; //1.0545718 * pow(10, -34);
     
     string filename;
     unsigned int numOfDim;

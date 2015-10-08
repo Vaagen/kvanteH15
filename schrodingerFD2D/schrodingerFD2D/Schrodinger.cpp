@@ -17,10 +17,10 @@ void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
     this->filename = filename;
     numOfDim = 1;
-    Lx1 = 0.001;
+    Lx1 = 1; // 0.001;
     Lx2 = 0.001;
     Lx3 = 0.001;
-    Nx1 = 1000;
+    Nx1 = 1200;
     Nx2 = 1000;
     Nx3 = 1000;
     Nt = 100000;
@@ -29,26 +29,26 @@ void Schrodinger::run(Situation situation, string filename){
     m = 1;
     p = 1;
     
-    SDx1 = Lx1 * Lx1 * Lx1;
+    SDx1 = 1/4;//Lx1 * Lx1 * Lx1;
     SDx2 = Lx2 * Lx2 * Lx2;
     SDx3 = Lx3 * Lx3 * Lx3;
     
     plotDensityX1 = 1;
     plotDensityX2 = 1;
     plotDensityX3 = 1;
-    plotDensityT = 50;
+    plotDensityT = Nt/500;
     
     // set the situation
     // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
             numOfDim = 1;
-            m = pow(10, -30);
+            m = 1; //pow(10, -30);
             potential = FREE;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
-            p = 10000 * m;
+            p = 2000 * m;
             break;
         case FREE_ELECTRON_2D:
             numOfDim = 2;
@@ -90,12 +90,12 @@ void Schrodinger::run(Situation situation, string filename){
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
     dx3 = Lx3 / Nx3;
-    dt = 1.0/4 * Lx1 / Nx1; // should be calculated some other way dependent on error calculations
+    dt = 2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
     if (dt == 0){
         dt = DBL_MIN;
         cout << "Uses smallest possible double as timestep, but it is still to big to garante for the error." << endl;
     }
-    k = p/hbar;
+    k = 2 * 3.1415926535897 * Lx1 * 20; //p/hbar;
     startX1 = Nx1 / 4;
     startX2 = Nx2 / 2;
     startX3 = Nx3 / 2;
@@ -210,8 +210,11 @@ void Schrodinger::finiteDifference1D(){
     double c1 = (dt / 2 / m / dx1 / dx1) * hbar;
     double c2 = dt / hbar;
     cout << c1 << endl;
+    if (c1 == 0){
+        cout << "c1 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
+    }
     for (int t = 0; t < Nt; t++){
-        if (t % plotDensityT == 0){
+        if (t % plotDensityT == 0){;
             for (int x = 0; x < Nx1; x += plotDensityX1){
                 if (numOfDim == 1){
                     fwrite(&psi_r1[x], sizeof(double), 1, plotPsiRFile);
@@ -223,10 +226,12 @@ void Schrodinger::finiteDifference1D(){
         }
         for (int x = 1; x < Nx1 - 1; x++){
             psi_r2[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i1[x] - c1 * psi_i1[x + 1] - c1 * psi_i1[x - 1];
+            /*
             cout << psi_r2[x] << endl;
             cout << psi_r1[x] << endl;
             int n;
             cin >> n;
+             */
             psi_i2[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_i1[x] + c1 * psi_i1[x + 1] + c1 * psi_i1[x - 1];
             psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * psi_i2[x + 1] - c1 * psi_i2[x - 1];
             psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_i2[x] + c1 * psi_i2[x + 1] + c1 * psi_i2[x - 1];
