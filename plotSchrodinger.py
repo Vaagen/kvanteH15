@@ -89,6 +89,8 @@ dt = np.dtype("f8")
 plotProbabilityFile = np.fromfile(find(fileName + "_plot_probability"), dtype=dt)
 plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
 plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
+potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
+
 
 '''
 x = np.linspace(0,Lx1,Nx1/plotDensityX1)
@@ -101,7 +103,7 @@ plt.show()
 #    print plotProbabilityFile[i*Nx1/plotDensityX1 + 100]
 
 fig = plt.figure()
-ax = plt.axes(xlim=(0, Lx1), ylim=(-1, 1))
+ax = plt.axes(xlim=(0, Lx1), ylim=(min([min(plotPsiRFile), min(plotPsiIFile)]), max(plotProbabilityFile)))
 probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
 psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
 psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
@@ -109,10 +111,11 @@ plt.legend(loc = 'lower right')
 if numOfDim == 2:
     probPlot, = ax.contourf([], [], [])
 
+
+
 # initialization function: plot the background of each frame
 def init1D():
-    probPlot.set_data([], [],)
-    return probPlot
+    return
 
 def init2D():
     #plotData = ax.contourf([], [], [], 500)
@@ -132,7 +135,7 @@ def animate1D(i):
     return probPlot, psiRPlot, psiIPlot
 
 def animate2D(i):
-    
+    probPlot.set_data(x1,x1,x1);
     return
 
 def animate3D(i):

@@ -17,19 +17,19 @@ void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
     this->filename = filename;
     numOfDim = 1;
-    Lx1 = 1; // 0.001;
+    Lx1 = 0.001;
     Lx2 = 0.001;
     Lx3 = 0.001;
     Nx1 = 1200;
     Nx2 = 1000;
     Nx3 = 1000;
-    Nt = 100000;
+    Nt = 1000000;
     V0 = 1;
     VThickness = 1;
     m = 1;
     p = 1;
     
-    SDx1 = 1/4;//Lx1 * Lx1 * Lx1;
+    SDx1 = 2 * Lx1 * Lx1 * Lx1;
     SDx2 = Lx2 * Lx2 * Lx2;
     SDx3 = Lx3 * Lx3 * Lx3;
     
@@ -43,7 +43,7 @@ void Schrodinger::run(Situation situation, string filename){
     switch (situation) {
         case FREE_ELECTRON_1D:
             numOfDim = 1;
-            m = 1; //pow(10, -30);
+            m = pow(10, -30);
             potential = FREE;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
@@ -83,9 +83,12 @@ void Schrodinger::run(Situation situation, string filename){
     
     if (numOfDim == 1){
         Nx2 = 1;
+        Lx2 = 1;
         Nx3 = 1;
+        Lx3 = 1;
     } else if (numOfDim == 2){
         Nx3 = 1;
+        Lx3 = 1;
     }
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
@@ -95,7 +98,7 @@ void Schrodinger::run(Situation situation, string filename){
         dt = DBL_MIN;
         cout << "Uses smallest possible double as timestep, but it is still to big to garante for the error." << endl;
     }
-    k = 2 * 3.1415926535897 * Lx1 * 20; //p/hbar;
+    k = 2 * 3.1415926535897 * 30 / Lx1; //p/hbar;
     startX1 = Nx1 / 4;
     startX2 = Nx2 / 2;
     startX3 = Nx3 / 2;
@@ -191,6 +194,7 @@ void Schrodinger::makeInitState(){
         default:
             break;
     }
+    //normalizePsi();
 }
 
 void Schrodinger::finiteDifference(){
@@ -251,7 +255,18 @@ void Schrodinger::finiteDifference1D(){
 }
 
 void Schrodinger::finiteDifference2D(){
+    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
     
+    
+    fclose(plotProbabilityFile);
+    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
+    fwrite(&psi_r1[0], sizeof(double), Nx1 * Nx2, finalStateFile);
+    fwrite(&psi_i1[0], sizeof(double), Nx1 * Nx2, finalStateFile);
+    fclose(finalStateFile);
+    FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
+    fwrite(&V[0], sizeof(double), Nx1 * Nx2, potentialFile);
+    fclose(potentialFile);
+    writeVariablesToFile();
 }
 
 void Schrodinger::finiteDifference3D(){
@@ -261,4 +276,23 @@ void Schrodinger::finiteDifference3D(){
 void Schrodinger::writeVariablesToFile(){
     ofstream finalStateFile(filename + "_variables.txt");
     finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
+}
+
+void Schrodinger::normalizePsi(){
+    double totalPossibility = 0;
+    for (int x1 = 0; x1 < Nx1; x1++){
+        for (int x2 = 0; x2 < Nx2; x2++){
+            for (int x3 = 0; x3 < Nx3; x3++){
+                totalPossibility += (psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] + psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_i1[Nx1*Nx2*x3+Nx1*x2+x1]) * dx1 * dx2 * dx3;
+            }
+        }
+    }
+    for (int x1 = 0; x1 < Nx1; x1++){
+        for (int x2 = 0; x2 < Nx2; x2++){
+            for (int x3 = 0; x3 < Nx3; x3++){
+                psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] /= totalPossibility;
+                psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] /= totalPossibility;
+            }
+        }
+    }
 }
