@@ -106,7 +106,7 @@ plt.show()
 #    print plotProbabilityFile[i*Nx1/plotDensityX1 + 100]
 
 fig = plt.figure()
-ax = plt.axes(xlim=(0, Lx1), ylim=(min([min(plotPsiRFile), min(plotPsiIFile)]), max(plotProbabilityFile)))
+ax = plt.axes(xlim=(0, Lx1), ylim=(min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * max(plotProbabilityFile)))
 probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
 psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
 psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
@@ -118,7 +118,8 @@ x3 = np.linspace(0,Lx3,Nx3/plotDensityX3)
 
 if numOfDim == 1:
     plt.plot(x1,potentialFile, ':k', zorder=0)
-    pylab.fill(x1, potentialFile, facecolor='y', alpha=0.2, zorder=0)
+    scaleConst = 0.5 * max(plotProbabilityFile) / max(potentialFile)
+    pylab.fill(x1, scaleConst * potentialFile, facecolor='y', alpha=0.2, zorder=0)
 if numOfDim == 2:
     probPlot, = ax.contourf([], [], [])
 
@@ -139,10 +140,11 @@ def init3D():
     return
 
 # animation function.  This is called sequentially
+scaleConst = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
 def animate1D(i):
     probPlot.set_data(x1, plotProbabilityFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    psiRPlot.set_data(x1, plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    psiIPlot.set_data(x1, plotPsiIFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+    psiRPlot.set_data(x1, scaleConst * plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
+    psiIPlot.set_data(x1, scaleConst * plotPsiIFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
     return probPlot, psiRPlot, psiIPlot
 
 def animate2D(i):

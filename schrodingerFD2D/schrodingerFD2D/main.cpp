@@ -11,5 +11,7 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {    Schrodinger s;
-    s.run(FREE_ELECTRON_1D, "test_free_electron");
+    //s.run(FREE_ELECTRON_1D, "test_free_electron");
+    s.run(ELECTRON_CONST_BARRIER_1D, "test_free_electron");
+    
 }

@@ -23,9 +23,9 @@ void Schrodinger::run(Situation situation, string filename){
     Nx1 = 1200;
     Nx2 = 1000;
     Nx3 = 1000;
-    Nt = 1000000;
-    V0 = 0.5;
-    VThickness = 0.0001;
+    Nt = 100000;
+    V0 = 0.0;
+    VThickness = 0.0;
     m = 1;
     p = 1;
     
@@ -49,6 +49,7 @@ void Schrodinger::run(Situation situation, string filename){
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 2000 * m;
+            Nt = 100000;
             break;
         case FREE_ELECTRON_2D:
             numOfDim = 2;
@@ -63,10 +64,13 @@ void Schrodinger::run(Situation situation, string filename){
             numOfDim = 1;
             m = pow(10, -30);
             potential = CONST_BARRIER_1D;
+            V0 = pow(10, -30);
+            VThickness = 0.0001;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
+            Nt = 1000000;
             break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
@@ -145,14 +149,14 @@ void Schrodinger::setV(){
             break;
         case CONST_BARRIER_1D:
             setVtoZero();
-            for (int x1 = (Nx1/2 - VThickness/dx1); x1 < Nx1/2 + VThickness/dx1; x1++){
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
                 V[x1] = V0;
             }
             Vmax = V0;
             break;
         case CONST_BARRIER_2D:
             setVtoZero();
-            for (int x1 = (Nx1/2 - VThickness/dx1); x1 < Nx1/2 + VThickness/dx1; x1++){
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
                 for (int x2 = 0; x2 < Nx2; x2++){
                         V[Nx1*x2+x1] = V0;
                 }
