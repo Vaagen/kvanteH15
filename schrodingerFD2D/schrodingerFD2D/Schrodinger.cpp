@@ -24,8 +24,8 @@ void Schrodinger::run(Situation situation, string filename){
     Nx2 = 1000;
     Nx3 = 1000;
     Nt = 1000000;
-    V0 = 1;
-    VThickness = 1;
+    V0 = 0.5;
+    VThickness = 0.0001;
     m = 1;
     p = 1;
     
@@ -55,8 +55,8 @@ void Schrodinger::run(Situation situation, string filename){
             m = pow(10, -30);
             potential = FREE;
             probDistrb = GAUSSIAN_2D;
-            SDx1 = 1;
-            SDx2 = 1;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
             p = 10;
             break;
         case ELECTRON_CONST_BARRIER_1D:
@@ -64,8 +64,8 @@ void Schrodinger::run(Situation situation, string filename){
             m = pow(10, -30);
             potential = CONST_BARRIER_1D;
             probDistrb = GAUSSIAN_1D;
-            SDx1 = 1;
-            SDx2 = 1;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
             p = 10;
             break;
         case ELECTRON_CONST_BARRIER_2D:
@@ -73,8 +73,8 @@ void Schrodinger::run(Situation situation, string filename){
             m = pow(10, -30);
             potential = CONST_BARRIER_2D;
             probDistrb = GAUSSIAN_2D;
-            SDx1 = 1;
-            SDx2 = 1;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
             p = 10;
             break;
         default:
@@ -93,11 +93,6 @@ void Schrodinger::run(Situation situation, string filename){
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
     dx3 = Lx3 / Nx3;
-    dt = 2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
-    if (dt == 0){
-        dt = DBL_MIN;
-        cout << "Uses smallest possible double as timestep, but it is still to big to garante for the error." << endl;
-    }
     k = 2 * 3.1415926535897 * 30 / Lx1; //p/hbar;
     startX1 = Nx1 / 4;
     startX2 = Nx2 / 2;
@@ -110,6 +105,13 @@ void Schrodinger::run(Situation situation, string filename){
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
     
     setV();
+    
+    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    if (dt == 0){
+        dt = DBL_MIN;
+        cout << "Uses smallest possible double as timestep, but it is still to big to garante for the error." << endl;
+    }
+    
     makeInitState();
     finiteDifference();
 }
@@ -139,21 +141,23 @@ void Schrodinger::setV(){
     switch (potential) {
         case FREE:
             setVtoZero();
+            Vmax = 0;
             break;
         case CONST_BARRIER_1D:
             setVtoZero();
-            for (int x1 = (Nx1/2 - VThickness*dx1); x1 < Nx1/2 + VThickness; x1++){
+            for (int x1 = (Nx1/2 - VThickness/dx1); x1 < Nx1/2 + VThickness/dx1; x1++){
                 V[x1] = V0;
             }
+            Vmax = V0;
             break;
         case CONST_BARRIER_2D:
             setVtoZero();
-            for (int x1 = (Nx1/2 - VThickness*dx1); x1 < Nx1/2 + VThickness; x1++){
+            for (int x1 = (Nx1/2 - VThickness/dx1); x1 < Nx1/2 + VThickness/dx1; x1++){
                 for (int x2 = 0; x2 < Nx2; x2++){
                         V[Nx1*x2+x1] = V0;
                 }
             }
-            
+            Vmax = V0;
             break;
         default:
             break;
@@ -230,15 +234,9 @@ void Schrodinger::finiteDifference1D(){
         }
         for (int x = 1; x < Nx1 - 1; x++){
             psi_r2[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i1[x] - c1 * psi_i1[x + 1] - c1 * psi_i1[x - 1];
-            /*
-            cout << psi_r2[x] << endl;
-            cout << psi_r1[x] << endl;
-            int n;
-            cin >> n;
-             */
-            psi_i2[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_i1[x] + c1 * psi_i1[x + 1] + c1 * psi_i1[x - 1];
+            psi_i2[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_r1[x] + c1 * psi_r1[x + 1] + c1 * psi_r1[x - 1];
             psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * psi_i2[x + 1] - c1 * psi_i2[x - 1];
-            psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_i2[x] + c1 * psi_i2[x + 1] + c1 * psi_i2[x - 1];
+            psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_r2[x] + c1 * psi_r2[x + 1] + c1 * psi_r2[x - 1];
         }
     }
     fclose(plotProbabilityFile);
@@ -275,7 +273,7 @@ void Schrodinger::finiteDifference3D(){
 
 void Schrodinger::writeVariablesToFile(){
     ofstream finalStateFile(filename + "_variables.txt");
-    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
+    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << V0 << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
 }
 
 void Schrodinger::normalizePsi(){

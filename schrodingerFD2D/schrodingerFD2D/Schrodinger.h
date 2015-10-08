@@ -65,6 +65,7 @@ private:
     double startX3;
     double V0; // referance potential
     double VThickness; // referance thickness
+    double Vmax;
     
     Situation situation;
     Potential potential;

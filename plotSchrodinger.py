@@ -11,6 +11,7 @@ import matplotlib
 matplotlib.use('TKAgg') # this is done to allow blit = True in FuncAnimation on mac
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import pylab
 import os
 import time
 
@@ -63,6 +64,8 @@ V0 = float(line)
 line = variableFile.readline()
 VThickness = float(line)
 line = variableFile.readline()
+Vmax = float(line)
+line = variableFile.readline()
 situation = int(line)
 line = variableFile.readline()
 potential = int(line)
@@ -108,6 +111,14 @@ probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
 psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
 psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
 plt.legend(loc = 'lower right')
+
+x1 = np.linspace(0,Lx1,Nx1/plotDensityX1)
+x2 = np.linspace(0,Lx2,Nx2/plotDensityX2)
+x3 = np.linspace(0,Lx3,Nx3/plotDensityX3)
+
+if numOfDim == 1:
+    plt.plot(x1,potentialFile, ':k', zorder=0)
+    pylab.fill(x1, potentialFile, facecolor='y', alpha=0.2, zorder=0)
 if numOfDim == 2:
     probPlot, = ax.contourf([], [], [])
 
@@ -115,7 +126,10 @@ if numOfDim == 2:
 
 # initialization function: plot the background of each frame
 def init1D():
-    return
+    probPlot.set_data([], [])
+    psiRPlot.set_data([], [])
+    psiIPlot.set_data([], [])
+    return probPlot, psiRPlot, psiIPlot
 
 def init2D():
     #plotData = ax.contourf([], [], [], 500)
@@ -124,9 +138,6 @@ def init2D():
 def init3D():
     return
 
-x1 = np.linspace(0,Lx1,Nx1/plotDensityX1)
-x2 = np.linspace(0,Lx2,Nx2/plotDensityX2)
-x3 = np.linspace(0,Lx3,Nx3/plotDensityX3)
 # animation function.  This is called sequentially
 def animate1D(i):
     probPlot.set_data(x1, plotProbabilityFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
@@ -145,7 +156,7 @@ def animate3D(i):
 # call the animator.  blit=True means only re-draw the parts that have changed.
 anim = None
 if numOfDim == 1:
-    anim = animation.FuncAnimation(fig, animate1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2:
     anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
 elif numOfDim == 3:
