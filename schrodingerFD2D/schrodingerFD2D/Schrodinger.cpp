@@ -72,6 +72,19 @@ void Schrodinger::run(Situation situation, string filename){
             p = 10;
             Nt = 100000;
             break;
+        case ELECTRON_TRIANGLE_1D:
+            numOfDim = 1;
+            m = pow(10, -30);
+            potential = TRIANGLE_1D;
+            V0 = pow(10, -30);
+            VThickness = 0.0001;
+            probDistrb = GAUSSIAN_1D;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
+            p = 10;
+            Nt = 100000;
+            // VdistanceToMax is distance from Lx1/2 to max of V, value is set in setV() under case: TRIANGLE_1D
+            break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
             m = pow(10, -30);
@@ -154,6 +167,17 @@ void Schrodinger::setV(){
             }
             Vmax = V0;
             break;
+        {case TRIANGLE_1D:
+            setVtoZero();
+            double VdistanceToMax = VThickness*0.5; // See Situation()
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VdistanceToMax/dx1; x1++){
+                V[x1] = V0/(VdistanceToMax/dx1)*(x1-Nx1/2);
+            }
+            for (int x1 = (Nx1/2) + VdistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
+                V[x1] = V0 - V0/((VThickness-VdistanceToMax)/dx1)* (x1-Nx1/2 - VdistanceToMax/dx1);
+            }
+            Vmax = V0;
+            break;}
         case CONST_BARRIER_2D:
             setVtoZero();
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
