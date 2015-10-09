@@ -66,6 +66,9 @@ private:
     double V0; // referance potential
     double VThickness; // referance thickness
     double Vmax;
+    double startEnergy;
+    double finalEnergy;
+    double finalProb;
     
     Situation situation;
     Potential potential;
@@ -90,24 +93,24 @@ private:
 // MEMBER FUNCTIONS
     // spesifies the potential
     void setV();
-    // sets V to zero everywhere
-    void setVtoZero();
+        // sets V to zero everywhere
+        void setVtoZero();
     
     // setting initial state
     void makeInitState();
     
     // calculating the time evolution and storing it in a tekst file
     void finiteDifference();
-    
-    void finiteDifference1D();
-    
-    void finiteDifference2D();
-    
-    void finiteDifference3D();
+        void finiteDifference1D();
+        void finiteDifference2D();
+        void finiteDifference3D();
+            void finalStore();
     
     void writeVariablesToFile();
     
     void normalizePsi();
+    double findProbability();
+    double findEnergy();
 };
 
 
