@@ -246,7 +246,7 @@ void Schrodinger::finiteDifference1D(){
     fclose(plotProbabilityFile);
     fclose(plotPsiRFile);
     fclose(plotPsiIFile);
-    finalStore()
+    finalStore();
 }
 
 void Schrodinger::finiteDifference2D(){
@@ -254,11 +254,11 @@ void Schrodinger::finiteDifference2D(){
     
     
     fclose(plotProbabilityFile);
-    finalStore()
+    finalStore();
 }
 
 void Schrodinger::finiteDifference3D(){
-    finalStore()
+    finalStore();
 }
 
 void Schrodinger::finalStore(){
@@ -269,21 +269,21 @@ void Schrodinger::finalStore(){
     FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
     fwrite(&V[0], sizeof(double), Nx1, potentialFile);
     fclose(potentialFile);
-    probability = probability();
+    probability = findProbability();
     writeVariablesToFile();
 }
 
 void Schrodinger::writeVariablesToFile(){
     ofstream finalStateFile(filename + "_variables.txt");
-    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnegry << endl << finalProb << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
+    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
 }
 
 void Schrodinger::normalizePsi(){
     for (int x1 = 0; x1 < Nx1; x1++){
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x3 = 0; x3 < Nx3; x3++){
-                psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] /= probability();
-                psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] /= probability();
+                psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] /= findProbability();
+                psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] /= findProbability();
             }
         }
     }
@@ -302,5 +302,5 @@ double Schrodinger::findProbability(){
 }
 
 double findEnergy(){
-    
+    return 1.0;
 }

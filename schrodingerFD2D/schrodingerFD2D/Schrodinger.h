@@ -69,6 +69,7 @@ private:
     double startEnergy;
     double finalEnergy;
     double finalProb;
+    double probability;
     
     Situation situation;
     Potential potential;
