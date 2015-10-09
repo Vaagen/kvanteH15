@@ -66,6 +66,12 @@ VThickness = float(line)
 line = variableFile.readline()
 Vmax = float(line)
 line = variableFile.readline()
+startEnergy = float(line)
+line = variableFile.readline()
+finalEnergy = float(line)
+line = variableFile.readline()
+finalProb = float(line)
+line = variableFile.readline()
 situation = int(line)
 line = variableFile.readline()
 potential = int(line)
@@ -169,7 +175,7 @@ elif numOfDim == 3:
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
-#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
 plt.show(block = False)
 plt.close()

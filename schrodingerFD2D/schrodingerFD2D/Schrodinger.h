@@ -17,8 +17,8 @@
 
 using namespace std;
 
-enum Situation{FREE_ELECTRON_1D, FREE_ELECTRON_2D, ELECTRON_CONST_BARRIER_1D, ELECTRON_CONST_BARRIER_2D};
-enum Potential{FREE,CONST_BARRIER_1D,CONST_BARRIER_2D};
+enum Situation{FREE_ELECTRON_1D, FREE_ELECTRON_2D, ELECTRON_CONST_BARRIER_1D, ELECTRON_TRIANGLE_1D, ELECTRON_CONST_BARRIER_2D};
+enum Potential{FREE,CONST_BARRIER_1D,TRIANGLE_1D, CONST_BARRIER_2D};
 enum ProbDistrb{GAUSSIAN_1D, GAUSSIAN_2D}; //probability distribution for initial position
 
 
@@ -66,6 +66,10 @@ private:
     double V0; // referance potential
     double VThickness; // referance thickness
     double Vmax;
+    double startEnergy;
+    double finalEnergy;
+    double finalProb;
+    double probability;
     
     Situation situation;
     Potential potential;
@@ -90,24 +94,24 @@ private:
 // MEMBER FUNCTIONS
     // spesifies the potential
     void setV();
-    // sets V to zero everywhere
-    void setVtoZero();
+        // sets V to zero everywhere
+        void setVtoZero();
     
     // setting initial state
     void makeInitState();
     
     // calculating the time evolution and storing it in a tekst file
     void finiteDifference();
-    
-    void finiteDifference1D();
-    
-    void finiteDifference2D();
-    
-    void finiteDifference3D();
+        void finiteDifference1D();
+        void finiteDifference2D();
+        void finiteDifference3D();
+            void finalStore();
     
     void writeVariablesToFile();
     
     void normalizePsi();
+    double findProbability();
+    double findEnergy();
 };
 
 

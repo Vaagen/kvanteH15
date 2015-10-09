@@ -70,7 +70,20 @@ void Schrodinger::run(Situation situation, string filename){
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
-            Nt = 1000000;
+            Nt = 100000;
+            break;
+        case ELECTRON_TRIANGLE_1D:
+            numOfDim = 1;
+            m = pow(10, -30);
+            potential = TRIANGLE_1D;
+            V0 = pow(10, -30);
+            VThickness = 0.0001;
+            probDistrb = GAUSSIAN_1D;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
+            p = 10;
+            Nt = 100000;
+            // VdistanceToMax is distance from Lx1/2 to max of V, value is set in setV() under case: TRIANGLE_1D
             break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
@@ -154,6 +167,17 @@ void Schrodinger::setV(){
             }
             Vmax = V0;
             break;
+        {case TRIANGLE_1D:
+            setVtoZero();
+            double VdistanceToMax = VThickness*0.5; // See Situation()
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VdistanceToMax/dx1; x1++){
+                V[x1] = V0/(VdistanceToMax/dx1)*(x1-Nx1/2);
+            }
+            for (int x1 = (Nx1/2) + VdistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
+                V[x1] = V0 - V0/((VThickness-VdistanceToMax)/dx1)* (x1-Nx1/2 - VdistanceToMax/dx1);
+            }
+            Vmax = V0;
+            break;}
         case CONST_BARRIER_2D:
             setVtoZero();
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
@@ -202,7 +226,7 @@ void Schrodinger::makeInitState(){
         default:
             break;
     }
-    //normalizePsi();
+    normalizePsi();
 }
 
 void Schrodinger::finiteDifference(){
@@ -246,14 +270,7 @@ void Schrodinger::finiteDifference1D(){
     fclose(plotProbabilityFile);
     fclose(plotPsiRFile);
     fclose(plotPsiIFile);
-    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
-    fwrite(&psi_r1[0], sizeof(double), Nx1, finalStateFile);
-    fwrite(&psi_i1[0], sizeof(double), Nx1, finalStateFile);
-    fclose(finalStateFile);
-    FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
-    fwrite(&V[0], sizeof(double), Nx1, potentialFile);
-    fclose(potentialFile);
-    writeVariablesToFile();
+    finalStore();
 }
 
 void Schrodinger::finiteDifference2D(){
@@ -261,40 +278,53 @@ void Schrodinger::finiteDifference2D(){
     
     
     fclose(plotProbabilityFile);
-    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
-    fwrite(&psi_r1[0], sizeof(double), Nx1 * Nx2, finalStateFile);
-    fwrite(&psi_i1[0], sizeof(double), Nx1 * Nx2, finalStateFile);
-    fclose(finalStateFile);
-    FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
-    fwrite(&V[0], sizeof(double), Nx1 * Nx2, potentialFile);
-    fclose(potentialFile);
-    writeVariablesToFile();
+    finalStore();
 }
 
 void Schrodinger::finiteDifference3D(){
-    
+    finalStore();
+}
+
+void Schrodinger::finalStore(){
+    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
+    fwrite(&psi_r1[0], sizeof(double), Nx1, finalStateFile);
+    fwrite(&psi_i1[0], sizeof(double), Nx1, finalStateFile);
+    fclose(finalStateFile);
+    FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
+    fwrite(&V[0], sizeof(double), Nx1, potentialFile);
+    fclose(potentialFile);
+    probability = findProbability();
+    writeVariablesToFile();
 }
 
 void Schrodinger::writeVariablesToFile(){
     ofstream finalStateFile(filename + "_variables.txt");
-    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << V0 << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
+    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb << endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotDensityX1 << endl << plotDensityX2 << endl << plotDensityX3 << endl << plotDensityT << endl;
 }
 
 void Schrodinger::normalizePsi(){
-    double totalPossibility = 0;
     for (int x1 = 0; x1 < Nx1; x1++){
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x3 = 0; x3 < Nx3; x3++){
-                totalPossibility += (psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] + psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_i1[Nx1*Nx2*x3+Nx1*x2+x1]) * dx1 * dx2 * dx3;
+                psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] /= findProbability();
+                psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] /= findProbability();
             }
         }
     }
+}
+
+double Schrodinger::findProbability(){
+    double probability;
     for (int x1 = 0; x1 < Nx1; x1++){
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x3 = 0; x3 < Nx3; x3++){
-                psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] /= totalPossibility;
-                psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] /= totalPossibility;
+                probability += (psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_r1[Nx1*Nx2*x3+Nx1*x2+x1] + psi_i1[Nx1*Nx2*x3+Nx1*x2+x1] * psi_i1[Nx1*Nx2*x3+Nx1*x2+x1]) * dx1 * dx2 * dx3;
             }
         }
     }
+    return probability;
+}
+
+double findEnergy(){
+    return 1.0;
 }
