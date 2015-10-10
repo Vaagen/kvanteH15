@@ -94,6 +94,19 @@ void Schrodinger::run(Situation situation, string filename){
             //SDx2 = SDx2;
             p = 10;
             break;
+        case ELECTRON_MULTIPLE_SLIT_2D:
+            numOfDim = 2;
+            m = pow(10, -30);
+            potential = MULTIPLE_SLIT_2D;
+            probDistrb = GAUSSIAN_2D;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
+            p = 10;
+            // The following variables are set in setV() under case: MULTIPLE_SLIT_2D
+            // slitNumber, number of slits in barrier
+            // slitWidth, width of each slit
+            // slitDistance, distance between each slit
+            break;
         default:
             break;
     }
@@ -187,6 +200,45 @@ void Schrodinger::setV(){
             }
             Vmax = V0;
             break;
+        {case MULTIPLE_SLIT_2D:
+            int slitNumber = 2;
+            double slitWidth = Lx2/15;
+            double slitDistance = Lx2/20;
+            setVtoZero();
+            // Making constant potential barrier
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                for (int x2 = 0; x2 < Nx2; x2++){
+                    V[Nx1*x2+x1] = V0;
+                }
+            }
+            // Making slits in constant potential barrier
+            int slitsPlaced = 0;
+            double nextSlitX2 = 0; // to keep track of where to place next slit
+            // Placing first slit, if odd number of slits.
+            if (slitNumber % 2 == 0){
+                nextSlitX2 = slitDistance/(dx2*2);
+            }else if (slitsPlaced % 2 == 1){
+                for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                    for (int x2 = Nx2/2 - slitWidth/(dx2*2); x2 < Nx2/2 + slitWidth/(dx2*2); x2++){
+                        V[Nx1*x2+x1] = 0;
+                    }
+                }
+                slitsPlaced++;
+                nextSlitX2 = slitWidth/2 + slitDistance;
+            }
+            // Placing remaining slits, two at a time
+            while (slitsPlaced < slitNumber && (nextSlitX2 + slitWidth < Lx2/2)){
+                for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                    for (int x2 = nextSlitX2/dx2; x2 < nextSlitX2/dx2 + slitWidth/dx2; x2++){
+                        V[Nx1*(Nx2/2 + x2) +x1] = 0;
+                        V[Nx1*(Nx2/2 - x2) +x1] = 0;
+                    }
+                }
+                slitsPlaced += 2;
+                nextSlitX2 += slitWidth + slitDistance;
+            }
+            Vmax = V0;
+            break;}
         default:
             break;
     }
