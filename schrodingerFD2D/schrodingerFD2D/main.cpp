@@ -13,6 +13,7 @@ using namespace std;
 int main(int argc, const char * argv[]) {    Schrodinger s;
     //s.run(FREE_ELECTRON_1D, "test_free_electron");
     s.run(ELECTRON_CONST_BARRIER_1D, "test_free_electron");
-    //s.run(ELECTRON_TRIANGLE_1D, "test_free_electron_");
+    //s.run(ELECTRON_TRIANGLE_1D, "test_free_electron");
+    //s.run(ELECTRON_MULTIPLE_SLIT_2D, "test_free_electron");
     
 }

@@ -15,6 +15,7 @@ import pylab
 import os
 import time
 
+
 # find location of file, 'name'
 def find(name):
     for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
@@ -99,6 +100,9 @@ plotProbabilityFile = np.fromfile(find(fileName + "_plot_probability"), dtype=dt
 plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
 plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
+
+
+
 
 
 '''
