@@ -78,10 +78,10 @@ private:
     double SDx2; // uncertity in position
     double SDx3; // uncertity in position
     
-    unsigned int plotDensityX1; //steps between x1 plotted
-    unsigned int plotDensityX2; //steps between x2 plotted
-    unsigned int plotDensityX3; //steps between x3 plotted
-    unsigned int plotDensityT; //steps between t plotted
+    unsigned int plotSpacingX1; //steps between x1 plotted
+    unsigned int plotSpacingX2; //steps between x2 plotted
+    unsigned int plotSpacingX3; //steps between x3 plotted
+    unsigned int plotSpacingT; //steps between t plotted
     
     double* V;
     double* psi_r1; //real part of wave function
@@ -111,6 +111,9 @@ private:
     void normalizePsi();
     double findProbability();
     double findEnergy();
+        double findEnergy1D();
+        double findEnergy2D();
+        double findEnergy3D();
 };
 
 

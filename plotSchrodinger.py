@@ -9,8 +9,11 @@ fileName = "test_free_electron"
 import numpy as np
 import matplotlib
 matplotlib.use('TKAgg') # this is done to allow blit = True in FuncAnimation on mac
+# import proper graphics back-end for Mac OS X
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
 import pylab
 import os
 import time
@@ -84,14 +87,20 @@ SDx2 = float(line)
 line = variableFile.readline()
 SDx3 = float(line)
 line = variableFile.readline()
-plotDensityX1 = int(line)
+plotSpacingX1 = int(line)
 line = variableFile.readline()
-plotDensityX2 = int(line)
+plotSpacingX2 = int(line)
 line = variableFile.readline()
-plotDensityX3 = int(line)
+plotSpacingX3 = int(line)
 line = variableFile.readline()
-plotDensityT = int(line)
+plotSpacingT = int(line)
 variableFile.close()
+
+print "The final energy is ",
+print finalEnergy / startEnergy,
+print " times the start energy."
+print "The final probability of finding the particle is: ",
+print finalProb
 
 # get data from plotFile
 dt = np.dtype("f8")
@@ -100,75 +109,87 @@ plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
 plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
 
-
 '''
-x = np.linspace(0,Lx1,Nx1/plotDensityX1)
-plt.plot(x, plotPsiRFile[0:Nx1/plotDensityX1], 'r.')
-plt.plot(x, plotPsiRFile[100*Nx1/plotDensityX1:(100+1)*Nx1/plotDensityX1], 'g.')
+x = np.linspace(0,Lx1,Nx1/plotSpacingX1)
+plt.plot(x, plotPsiRFile[0:Nx1/plotSpacingX1], 'r.')
+plt.plot(x, plotPsiRFile[100*Nx1/plotSpacingX1:(100+1)*Nx1/plotSpacingX1], 'g.')
 plt.show()
 '''
 
-# for i in range(0,Nt/plotDensityT):
-#    print plotProbabilityFile[i*Nx1/plotDensityX1 + 100]
-
 fig = plt.figure()
-ax = plt.axes(xlim=(0, Lx1), ylim=(min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * max(plotProbabilityFile)))
+'''
+scaleConstPsi = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
+ax = plt.axes(xlim=(0, Lx1), ylim=(1.1 * scaleConstPsi * min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * max(plotProbabilityFile)))
 probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
 psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
 psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
 plt.legend(loc = 'lower right')
+'''
 
-x1 = np.linspace(0,Lx1,Nx1/plotDensityX1)
-x2 = np.linspace(0,Lx2,Nx2/plotDensityX2)
-x3 = np.linspace(0,Lx3,Nx3/plotDensityX3)
+x1 = np.linspace(0,Lx1,Nx1/plotSpacingX1)
+x2 = np.linspace(0,Lx2,Nx2/plotSpacingX2)
+x3 = np.linspace(0,Lx3,Nx3/plotSpacingX3)
 
+scaleConstEnergy = 0.5 * max(plotProbabilityFile) / startEnergy
+
+ax3d = Axes3D(fig)
 if numOfDim == 1:
-    plt.plot(x1,potentialFile, ':k', zorder=0)
-    scaleConst = 0.5 * max(plotProbabilityFile) / max(potentialFile)
-    pylab.fill(x1, scaleConst * potentialFile, facecolor='y', alpha=0.2, zorder=0)
+    plt.plot(x1, scaleConstEnergy * potentialFile, ':k', zorder=0)
+    pylab.fill(x1, scaleConstEnergy * potentialFile, facecolor='y', alpha=0.2, zorder=0)
+'''
 if numOfDim == 2:
-    probPlot, = ax.contourf([], [], [])
-
-
+    probPlot = ax3d.plot_surface([], [], [], rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    x1, x2 = np.meshgrid(x1, x2)
+'''
+z = plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx1/plotSpacingX1,Nx2/plotSpacingX2)
+x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
+probPlot = ax3d.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False);
 
 # initialization function: plot the background of each frame
 def init1D():
+    energy = np.linspace(scaleConstEnergy * startEnergy, scaleConstEnergy * startEnergy, Nx1/plotSpacingX1)
+    energyPlot, = ax.plot(x1, energy)
     probPlot.set_data([], [])
     psiRPlot.set_data([], [])
     psiIPlot.set_data([], [])
-    return probPlot, psiRPlot, psiIPlot
+    return probPlot, psiRPlot, psiIPlot, energyPlot,
 
 def init2D():
-    #plotData = ax.contourf([], [], [], 500)
-    return
+    probPlot = ax3d.plot_surface([], [], [], rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
+    return probPlot,
 
 def init3D():
     return
 
-# animation function.  This is called sequentially
-scaleConst = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
-def animate1D(i):
-    probPlot.set_data(x1, plotProbabilityFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    psiRPlot.set_data(x1, scaleConst * plotPsiRFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    psiIPlot.set_data(x1, scaleConst * plotPsiIFile[Nx1/plotDensityX1*i:Nx1/plotDensityX1*(i+1)])
-    return probPlot, psiRPlot, psiIPlot
 
-def animate2D(i):
-    probPlot.set_data(x1,x1,x1);
-    return
+# animation function.  This is called sequentially
+def animate1D(i):
+    probPlot.set_data(x1, plotProbabilityFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
+    psiRPlot.set_data(x1, scaleConstPsi * plotPsiRFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
+    psiIPlot.set_data(x1, scaleConstPsi * plotPsiIFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
+    return probPlot, psiRPlot, psiIPlot,
+
+def animate2D(i, x1, x2, probPlot):
+    z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+    x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
+    probPlot = ax3d.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False);
+    return probPlot,
 
 def animate3D(i):
     return
 
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
+startTime = time.clock()
 anim = None
+print Nt/plotSpacingT * 20 / 1000
 if numOfDim == 1:
-    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2:
-    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=200, blit=False, repeat = False, fargs=(x1,x2,probPlot))
 elif numOfDim == 3:
-    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotDensityT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 
 # save the animation as an mp4.  This requires ffmpeg or mencoder to be
 # installed.  The extra_args ensure that the x264 codec is used, so that
@@ -177,5 +198,8 @@ elif numOfDim == 3:
 # http://matplotlib.sourceforge.net/api/animation_api.html
 #anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 
-plt.show(block = False)
+plt.show() #block = False) # the 'block = False' somehow makes the animation unstable and make it randomly quit prematurly
+
 plt.close()
+print "Seconds used to run animation: ",
+print time.clock() - startTime

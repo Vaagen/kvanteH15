@@ -6,15 +6,19 @@
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>A4533A17-3CE0-4D65-B796-BE32DAAE8ED9</string>
+	<key>IDESourceControlProjectName</key>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>621C90FA0F8B5F77154317138093FAB15C110D88</key>
 		<string>https://github.com/Vaagen/kvanteH15.git</string>
 	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>schrodingerFD2D/schrodingerFD2D.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>621C90FA0F8B5F77154317138093FAB15C110D88</key>
-		<string>kvanteH15/</string>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/Vaagen/kvanteH15.git</string>
