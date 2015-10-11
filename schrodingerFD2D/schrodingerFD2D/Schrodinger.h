@@ -30,7 +30,7 @@ public:
     void run(Situation situation, string filename);
     
     // continue previous simulation
-    void contSim(string filename, unsigned int numOfTimesteps);
+    void continueSimulation(string filename, unsigned int numOfTimesteps);
     
     // sets the referanse potential
     void setV0(double V0){this->V0 = V0;}
@@ -60,9 +60,9 @@ private:
     double m;
     double p;
     double k;
-    double startX1;
-    double startX2;
-    double startX3;
+    unsigned int startX1;
+    unsigned int startX2;
+    unsigned int startX3;
     double V0; // referance potential
     double VThickness; // referance thickness
     double Vmax;
@@ -100,10 +100,10 @@ private:
     void makeInitState();
     
     // calculating the time evolution and storing it in a tekst file
-    void finiteDifference();
-        void finiteDifference1D();
-        void finiteDifference2D();
-        void finiteDifference3D();
+    void finiteDifference(bool newSimulation);
+        void finiteDifference1D(char* fileOpenType);
+        void finiteDifference2D(char* fileOpenType);
+        void finiteDifference3D(char* fileOpenType);
             void finalStore();
     
     void writeVariablesToFile();
@@ -114,6 +114,9 @@ private:
         double findEnergy1D();
         double findEnergy2D();
         double findEnergy3D();
+    
+    void loadVaiables();
+    void loadFinalState();
 };
 
 

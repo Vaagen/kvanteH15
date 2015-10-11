@@ -3,7 +3,7 @@
 # as well as placing these files in the same directory as this file, 'plotSchroinger.py', or in a subdirectory of this directory
 
 fileName = "test_free_electron"
-animationType2D = "frameByFrame"  #choose between "animation" or "frameByFrame"
+animationType2D = "frameByFrame" #"frameByFrame"  #choose between "animation" or "frameByFrame"
 
 # one should not be needing to do changes to the rest of the script
 
@@ -119,8 +119,6 @@ plt.plot(x, plotPsiRFile[100*Nx1/plotSpacingX1:(100+1)*Nx1/plotSpacingX1], 'g.')
 plt.show()
 '''
 
-startTime = time.clock()
-
 fig = plt.figure()
 '''
 scaleConstPsi = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
@@ -198,12 +196,13 @@ def animate3D(i):
 
 
 # call the animator.  blit=True means only re-draw the parts that have changed.
+startTime = time.clock()
 anim = None
 print Nt/plotSpacingT * 50 / 1000
 if numOfDim == 1:
     anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2 and animationType2D == "animation":
-    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=50, blit=False, repeat = False, fargs=(x1,x2,probPlot))
+    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=500, blit=False, repeat = False, fargs=(x1,x2,probPlot))
 elif numOfDim == 3:
     anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 

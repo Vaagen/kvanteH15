@@ -62,10 +62,10 @@ void Schrodinger::run(Situation situation, string filename){
             probDistrb = GAUSSIAN_2D;
             plotSpacingX1 = 10;
             plotSpacingX2 = 5;
-            numOfFrames = 10;
+            numOfFrames = 20;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
-            Nt = 10000;
+            Nt = 1000;
             p = 10;
             break;
         case ELECTRON_CONST_BARRIER_1D:
@@ -158,10 +158,26 @@ void Schrodinger::run(Situation situation, string filename){
     makeInitState();
     startEnergy = findEnergy();
     
-    finiteDifference();
+    finiteDifference(true);
+    cout << Nx1 * Nx2 << endl;
 }
 
-void Schrodinger::contSim(string filename, unsigned int numOfTimesteps){
+void Schrodinger::continueSimulation(string filename, unsigned int numOfTimesteps){
+    this->filename = filename;
+    loadVaiables();
+    Nt = numOfTimesteps;
+    // make any other changes to the variables here:
+        plotSpacingT *= 2;
+    
+    V = new double [Nx1 * Nx2 * Nx3];
+    psi_r1 = new double [Nx1 * Nx2 * Nx3];
+    psi_i1 = new double [Nx1 * Nx2 * Nx3];
+    psi_r2 = new double [Nx1 * Nx2 * Nx3];
+    psi_i2 = new double [Nx1 * Nx2 * Nx3];
+    setV();
+    loadFinalState();
+    cout << Nx1 * Nx2 << endl;
+    finiteDifference(false);
 }
 
 Schrodinger::Schrodinger(){
@@ -296,23 +312,28 @@ void Schrodinger::makeInitState(){
     normalizePsi();
 }
 
-void Schrodinger::finiteDifference(){
+void Schrodinger::finiteDifference(bool newSimulation){
+    char fileOpenType[] = "wb";
+    if (!newSimulation) {
+        fileOpenType[0] = 'a';
+        fileOpenType[1] = 'b';
+    }
     if (numOfDim == 1){
-        finiteDifference1D();
+        finiteDifference1D(fileOpenType);
     } else if (numOfDim == 2){
-        finiteDifference2D();
+        finiteDifference2D(fileOpenType);
     } else {
-        finiteDifference3D();
+        finiteDifference3D(fileOpenType);
     }
     finalStore();
     cout << "The final energy is " << finalEnergy/startEnergy << " times the start energy." << endl;
     cout << "The final probability of finding the particle is: " << finalProb << endl;
 }
 
-void Schrodinger::finiteDifference1D(){
-    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
-    FILE* plotPsiRFile = fopen((filename + "_plot_psi_r").c_str(), "wb");
-    FILE* plotPsiIFile = fopen((filename + "_plot_psi_i").c_str(), "wb");
+void Schrodinger::finiteDifference1D(char* fileOpenType){
+    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
+    FILE* plotPsiRFile = fopen((filename + "_plot_psi_r").c_str(), fileOpenType);
+    FILE* plotPsiIFile = fopen((filename + "_plot_psi_i").c_str(), fileOpenType);
     double c1 = (dt / 2 / m / dx1 / dx1) * hbar;
     double c2 = dt / hbar;
     cout << c1 << endl;
@@ -341,12 +362,12 @@ void Schrodinger::finiteDifference1D(){
     fclose(plotPsiIFile);
 }
 
-void Schrodinger::finiteDifference2D(){
-    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
+void Schrodinger::finiteDifference2D(char* fileOpenType){
+    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
     double c1x1 = hbar * dt / dx1 / dx1;
     double c1x2 = hbar * dt / dx2 / dx2;
-    c1x1 = 0.008;
-    c1x2 = 0.008;
+    c1x1 = 0.0005;
+    c1x2 = 0.0005;
     double c2 = dt / hbar;
     cout << "c1x1: " << c1x1 << endl;
     cout << "c1x2: " << c1x2 << endl;
@@ -375,11 +396,10 @@ void Schrodinger::finiteDifference2D(){
         }
     }
     fclose(plotProbabilityFile);
-    finalStore();
 }
 
-void Schrodinger::finiteDifference3D(){
-    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
+void Schrodinger::finiteDifference3D(char* fileOpenType){
+    FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
     double c1x1 = hbar * dt / dx1 / dx1;
     double c1x2 = hbar * dt / dx2 / dx2;
     double c1x3 = hbar * dt / dx3 / dx3;
@@ -427,9 +447,9 @@ void Schrodinger::finalStore(){
 }
 
 void Schrodinger::writeVariablesToFile(){
-    ofstream finalStateFile(filename + "_variables.txt");
-    finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb <<  endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl << plotSpacingT << endl;
-
+    ofstream variableFile(filename + "_variables.txt");
+    variableFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb <<  endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl << plotSpacingT << endl;
+    variableFile.close();
 }
 
 void Schrodinger::normalizePsi(){
@@ -508,4 +528,89 @@ double Schrodinger::findEnergy3D(){
         }
     }
     return energy;
+}
+
+void Schrodinger::loadVaiables(){
+    ifstream variableFile(filename + "_variables.txt");
+    string variable;
+    getline(variableFile, variable);
+    numOfDim = stoi(variable);
+    cout << numOfDim << endl;
+    getline(variableFile, variable);
+    Lx1 = stoi(variable);
+    getline(variableFile, variable);
+    Lx2 = stoi(variable);
+    getline(variableFile, variable);
+    Lx3 = stoi(variable);
+    getline(variableFile, variable);
+    Nx1 = stoi(variable);
+    getline(variableFile, variable);
+    Nx2 = stoi(variable);
+    getline(variableFile, variable);
+    Nx3 = stoi(variable);
+    getline(variableFile, variable);
+    Nt = stoi(variable);
+    getline(variableFile, variable);
+    dx1 = stod(variable);
+    getline(variableFile, variable);
+    dx2 = stod(variable);
+    getline(variableFile, variable);
+    dx3 = stod(variable);
+    getline(variableFile, variable);
+    dt = stod(variable);
+    getline(variableFile, variable);
+    m = stod(variable);
+    getline(variableFile, variable);
+    p = stod(variable);
+    getline(variableFile, variable);
+    k = stod(variable);
+    getline(variableFile, variable);
+    startX1 = stoi(variable);
+    getline(variableFile, variable);
+    startX2 = stoi(variable);
+    getline(variableFile, variable);
+    startX3 = stoi(variable);
+    getline(variableFile, variable);
+    V0 = stod(variable);
+    getline(variableFile, variable);
+    VThickness = stod(variable);
+    getline(variableFile, variable);
+    Vmax = stod(variable);
+    getline(variableFile, variable);
+    startEnergy = stod(variable);
+    getline(variableFile, variable);
+    finalEnergy = stod(variable);
+    getline(variableFile, variable);
+    finalProb = stod(variable);
+    getline(variableFile, variable);
+    int i = stoi(variable);
+    situation = static_cast<Situation>(i);
+    getline(variableFile, variable);
+    i = stoi(variable);
+    potential = static_cast<Potential>(i);
+    getline(variableFile, variable);
+    i = stoi(variable);
+    probDistrb = static_cast<ProbDistrb>(i);
+    getline(variableFile, variable);
+    SDx1 = stod(variable);
+    getline(variableFile, variable);
+    SDx2 = stod(variable);
+    getline(variableFile, variable);
+    SDx3 = stod(variable);
+    getline(variableFile, variable);
+    plotSpacingX1 = stoi(variable);
+    getline(variableFile, variable);
+    plotSpacingX2 = stoi(variable);
+    getline(variableFile, variable);
+    plotSpacingX3 = stoi(variable);
+    getline(variableFile, variable);
+    plotSpacingT = stoi(variable);
+    variableFile.close();
+}
+
+void Schrodinger::loadFinalState(){
+    FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "rb");
+    fread(psi_r1, sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
+    fread(psi_i1, sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
+    fclose(finalStateFile);
 }
