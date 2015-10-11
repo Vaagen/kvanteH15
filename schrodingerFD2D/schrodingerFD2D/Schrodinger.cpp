@@ -345,11 +345,11 @@ void Schrodinger::finiteDifference2D(){
     FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
     double c1x1 = hbar * dt / dx1 / dx1;
     double c1x2 = hbar * dt / dx2 / dx2;
-    c1x1 = 0.01;
-    c1x2 = 0.01;
+    c1x1 = 0.008;
+    c1x2 = 0.008;
     double c2 = dt / hbar;
-    cout << c1x1 << endl;
-    cout << c1x2 << endl;
+    cout << "c1x1: " << c1x1 << endl;
+    cout << "c1x2: " << c1x2 << endl;
     if (c1x1 == 0 || c1x2 == 0){
         cout << "c1x1 or c1x2 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
     }
