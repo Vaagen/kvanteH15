@@ -18,6 +18,7 @@ import pylab
 import os
 import time
 
+
 # find location of file, 'name'
 def find(name):
     for root, dirs, files in os.walk(os.path.dirname(os.path.realpath(__file__))):
@@ -109,6 +110,7 @@ plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
 plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
 
+
 '''
 x = np.linspace(0,Lx1,Nx1/plotSpacingX1)
 plt.plot(x, plotPsiRFile[0:Nx1/plotSpacingX1], 'r.')
@@ -196,7 +198,7 @@ elif numOfDim == 3:
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
-#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
 plt.show() #block = False) # the 'block = False' somehow makes the animation unstable and make it randomly quit prematurly
 

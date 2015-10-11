@@ -79,6 +79,19 @@ void Schrodinger::run(Situation situation, string filename){
             p = 10;
             Nt = 100000;
             break;
+        case ELECTRON_TRIANGLE_1D:
+            numOfDim = 1;
+            m = pow(10, -30);
+            potential = TRIANGLE_1D;
+            V0 = pow(10, -30);
+            VThickness = 0.0001;
+            probDistrb = GAUSSIAN_1D;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
+            p = 10;
+            Nt = 100000;
+            // VdistanceToMax is distance from Lx1/2 to max of V, value is set in setV() under case: TRIANGLE_1D
+            break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
             m = pow(10, -30);
@@ -87,6 +100,19 @@ void Schrodinger::run(Situation situation, string filename){
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
+            break;
+        case ELECTRON_MULTIPLE_SLIT_2D:
+            numOfDim = 2;
+            m = pow(10, -30);
+            potential = MULTIPLE_SLIT_2D;
+            probDistrb = GAUSSIAN_2D;
+            //SDx1 = SDx1;
+            //SDx2 = SDx2;
+            p = 10;
+            // The following variables are set in setV() under case: MULTIPLE_SLIT_2D
+            // slitNumber, number of slits in barrier
+            // slitWidth, width of each slit
+            // slitDistance, distance between each slit
             break;
         default:
             break;
@@ -165,6 +191,17 @@ void Schrodinger::setV(){
             }
             Vmax = V0;
             break;
+        {case TRIANGLE_1D:
+            setVtoZero();
+            double VdistanceToMax = VThickness*0.5; // See Situation()
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VdistanceToMax/dx1; x1++){
+                V[x1] = V0/(VdistanceToMax/dx1)*(x1-Nx1/2);
+            }
+            for (int x1 = (Nx1/2) + VdistanceToMax/dx1; x1 < Nx1/2 + VThickness/dx1; x1++){
+                V[x1] = V0 - V0/((VThickness-VdistanceToMax)/dx1)* (x1-Nx1/2 - VdistanceToMax/dx1);
+            }
+            Vmax = V0;
+            break;}
         case CONST_BARRIER_2D:
             setVtoZero();
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
@@ -174,6 +211,45 @@ void Schrodinger::setV(){
             }
             Vmax = V0;
             break;
+        {case MULTIPLE_SLIT_2D:
+            int slitNumber = 2;
+            double slitWidth = Lx2/15;
+            double slitDistance = Lx2/20;
+            setVtoZero();
+            // Making constant potential barrier
+            for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                for (int x2 = 0; x2 < Nx2; x2++){
+                    V[Nx1*x2+x1] = V0;
+                }
+            }
+            // Making slits in constant potential barrier
+            int slitsPlaced = 0;
+            double nextSlitX2 = 0; // to keep track of where to place next slit
+            // Placing first slit, if odd number of slits.
+            if (slitNumber % 2 == 0){
+                nextSlitX2 = slitDistance/(dx2*2);
+            }else if (slitsPlaced % 2 == 1){
+                for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                    for (int x2 = Nx2/2 - slitWidth/(dx2*2); x2 < Nx2/2 + slitWidth/(dx2*2); x2++){
+                        V[Nx1*x2+x1] = 0;
+                    }
+                }
+                slitsPlaced++;
+                nextSlitX2 = slitWidth/2 + slitDistance;
+            }
+            // Placing remaining slits, two at a time
+            while (slitsPlaced < slitNumber && (nextSlitX2 + slitWidth < Lx2/2)){
+                for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
+                    for (int x2 = nextSlitX2/dx2; x2 < nextSlitX2/dx2 + slitWidth/dx2; x2++){
+                        V[Nx1*(Nx2/2 + x2) +x1] = 0;
+                        V[Nx1*(Nx2/2 - x2) +x1] = 0;
+                    }
+                }
+                slitsPlaced += 2;
+                nextSlitX2 += slitWidth + slitDistance;
+            }
+            Vmax = V0;
+            break;}
         default:
             break;
     }
@@ -342,6 +418,7 @@ void Schrodinger::finalStore(){
 void Schrodinger::writeVariablesToFile(){
     ofstream finalStateFile(filename + "_variables.txt");
     finalStateFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb <<  endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl << plotSpacingT << endl;
+
 }
 
 void Schrodinger::normalizePsi(){

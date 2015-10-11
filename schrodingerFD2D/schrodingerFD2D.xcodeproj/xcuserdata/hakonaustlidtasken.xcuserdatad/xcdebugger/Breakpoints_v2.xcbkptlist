@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.h"
-            timestampString = "466122216.401158"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
             landmarkName = "class Schrodinger"
             landmarkType = "3">
          </BreakpointContent>
@@ -31,7 +31,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "136"
             endingLineNumber = "136"
-            landmarkName = "Schrodinger::Schrodinger()"
+            landmarkName = "Schrodinger::run(Situation situation, string filename)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -77,7 +77,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "186"
             endingLineNumber = "186"
-            landmarkName = "Schrodinger::setVtoZero()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -93,7 +93,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "200"
             endingLineNumber = "200"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -109,7 +109,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "255"
             endingLineNumber = "255"
-            landmarkName = "Schrodinger::finiteDifference1D()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -157,7 +157,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "209"
             endingLineNumber = "209"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -173,7 +173,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "210"
             endingLineNumber = "210"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -189,7 +189,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "211"
             endingLineNumber = "211"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -200,12 +200,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.cpp"
-            timestampString = "466209912.7013"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
-            landmarkName = "Schrodinger::normalizePsi()"
+            startingLineNumber = "357"
+            endingLineNumber = "357"
+            landmarkName = "Schrodinger::finiteDifference2D()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -216,12 +216,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.cpp"
-            timestampString = "466209912.7013"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "363"
-            endingLineNumber = "363"
-            landmarkName = "Schrodinger::normalizePsi()"
+            startingLineNumber = "359"
+            endingLineNumber = "359"
+            landmarkName = "Schrodinger::finiteDifference2D()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -237,7 +237,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "201"
             endingLineNumber = "201"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -253,7 +253,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "198"
             endingLineNumber = "198"
-            landmarkName = "Schrodinger::makeInitState()"
+            landmarkName = "Schrodinger::setV()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -300,9 +300,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "257"
-            endingLineNumber = "257"
-            landmarkName = "Schrodinger::finiteDifference1D()"
-            landmarkType = "5">
+            endingLineNumber = "257">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -317,7 +315,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "259"
             endingLineNumber = "259"
-            landmarkName = "Schrodinger::finiteDifference1D()"
+            landmarkName = "Schrodinger::setVtoZero()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -333,7 +331,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "258"
             endingLineNumber = "258"
-            landmarkName = "Schrodinger::finiteDifference1D()"
+            landmarkName = "Schrodinger::setVtoZero()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -360,12 +358,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.cpp"
-            timestampString = "466209912.7013"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "354"
-            endingLineNumber = "354"
-            landmarkName = "Schrodinger::normalizePsi()"
+            startingLineNumber = "350"
+            endingLineNumber = "350"
+            landmarkName = "Schrodinger::finiteDifference2D()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -376,12 +374,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.cpp"
-            timestampString = "466209912.7013"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "364"
-            endingLineNumber = "364"
-            landmarkName = "Schrodinger::normalizePsi()"
+            startingLineNumber = "360"
+            endingLineNumber = "360"
+            landmarkName = "Schrodinger::finiteDifference2D()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -392,12 +390,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "schrodingerFD2D/Schrodinger.cpp"
-            timestampString = "466209912.7013"
+            timestampString = "466247893.120523"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
-            landmarkName = "Schrodinger::findProbability()"
+            startingLineNumber = "371"
+            endingLineNumber = "371"
+            landmarkName = "Schrodinger::finiteDifference3D()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

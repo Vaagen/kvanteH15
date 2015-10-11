@@ -41,3 +41,12 @@ git checkout master
 git fetch
 git reset --hard origin
 	Disse to i kombinasjon fjerner det du har og tar over Origin slik den er nå
+
+git clean 
+    Fjerner alle untracked files
+    -d  for å ta med untracked files i undermapper
+    -n  for å få oversikt over hva som vil slettes hvis du kjører git clean
+    -f  for å tvinge git til å slette filene
+
+git show-branch
+    Viser info om branches, se https://wincent.com/wiki/Understanding_the_output_of_%22git_show-branch%22
