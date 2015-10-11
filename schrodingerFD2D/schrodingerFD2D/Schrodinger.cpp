@@ -85,7 +85,7 @@ void Schrodinger::run(Situation situation, string filename){
             m = pow(10, -30);
             potential = TRIANGLE_1D;
             V0 = pow(10, -30);
-            VThickness = 0.0001;
+            VThickness = Lx1/100;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
@@ -104,9 +104,18 @@ void Schrodinger::run(Situation situation, string filename){
             break;
         case ELECTRON_MULTIPLE_SLIT_2D:
             numOfDim = 2;
+            Lx1 = 0.00007;
+            Lx2 = 0.00004;
+            Nx1 = 700;
+            Nx2 = 400;
+            VThickness = Lx1 / 100;
             m = pow(10, -30);
             potential = MULTIPLE_SLIT_2D;
             probDistrb = GAUSSIAN_2D;
+            plotSpacingX1 = 10;
+            plotSpacingX2 = 5;
+            numOfFrames = 20;
+            Nt = 10000;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
@@ -159,7 +168,6 @@ void Schrodinger::run(Situation situation, string filename){
     startEnergy = findEnergy();
     
     finiteDifference(true);
-    cout << Nx1 * Nx2 << endl;
 }
 
 void Schrodinger::continueSimulation(string filename, unsigned int numOfTimesteps){
@@ -176,7 +184,6 @@ void Schrodinger::continueSimulation(string filename, unsigned int numOfTimestep
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
     setV();
     loadFinalState();
-    cout << Nx1 * Nx2 << endl;
     finiteDifference(false);
 }
 
@@ -435,11 +442,11 @@ void Schrodinger::finiteDifference3D(char* fileOpenType){
 
 void Schrodinger::finalStore(){
     FILE* finalStateFile = fopen((filename + "_finalState").c_str(), "wb");
-    fwrite(&psi_r1[0], sizeof(double), Nx1, finalStateFile);
-    fwrite(&psi_i1[0], sizeof(double), Nx1, finalStateFile);
+    fwrite(&psi_r1[0], sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
+    fwrite(&psi_i1[0], sizeof(double), Nx1*Nx2*Nx3, finalStateFile);
     fclose(finalStateFile);
     FILE* potentialFile = fopen((filename + "_potential").c_str(), "wb");
-    fwrite(&V[0], sizeof(double), Nx1, potentialFile);
+    fwrite(&V[0], sizeof(double), Nx1*Nx2*Nx3, potentialFile);
     fclose(potentialFile);
     finalProb = findProbability();
     finalEnergy = findEnergy();
@@ -454,7 +461,6 @@ void Schrodinger::writeVariablesToFile(){
 
 void Schrodinger::normalizePsi(){
     double probability = findProbability();
-    //cout << probability << endl;
     for (int x3 = 0; x3 < Nx3; x3++){
         for (int x2 = 0; x2 < Nx2; x2++){
             for (int x1 = 0; x1 < Nx1; x1++){
@@ -535,7 +541,6 @@ void Schrodinger::loadVaiables(){
     string variable;
     getline(variableFile, variable);
     numOfDim = stoi(variable);
-    cout << numOfDim << endl;
     getline(variableFile, variable);
     Lx1 = stoi(variable);
     getline(variableFile, variable);

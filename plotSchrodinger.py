@@ -120,14 +120,13 @@ plt.show()
 '''
 
 fig = plt.figure()
-'''
+
 scaleConstPsi = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
 ax = plt.axes(xlim=(0, Lx1), ylim=(1.1 * scaleConstPsi * min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * max(plotProbabilityFile)))
 probPlot, = ax.plot([], [], 'k', lw = 1, label = 'Probability')
 psiRPlot, = ax.plot([], [], 'b', lw = 1, label = 'Real part') # only used for 1D
 psiIPlot, = ax.plot([], [], 'r', lw = 1, label = 'Imaginary part') # only used for 1D
-plt.legend(loc = 'lower right')
-'''
+
 
 x1 = np.linspace(0,Lx1,Nx1/plotSpacingX1)
 x2 = np.linspace(0,Lx2,Nx2/plotSpacingX2)
@@ -135,30 +134,33 @@ x3 = np.linspace(0,Lx3,Nx3/plotSpacingX3)
 
 scaleConstEnergy = 0.5 * max(plotProbabilityFile) / startEnergy
 
-ax = fig.gca(projection = '3d')
 if numOfDim == 1:
+    plt.legend(loc = 'lower right')
     plt.plot(x1, scaleConstEnergy * potentialFile, ':k', zorder=0)
     pylab.fill(x1, scaleConstEnergy * potentialFile, facecolor='y', alpha=0.2, zorder=0)
-'''
 if numOfDim == 2:
-    probPlot = ax3d.plot_surface([], [], [], rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    x1, x2 = np.meshgrid(x1, x2)
-'''
-z = plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
-x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False);
+    plt.cla()
+    ax = fig.gca(projection = '3d')
+    z = plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+    x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
+    probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False);
+    if animationType2D == "frameByFrame":
+        for t in range(0,Nt/plotSpacingT):
+            plt.cla()
+            pot = potentialFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+            ax.plot_surface(x1, x2, scaleConstEnergy * pot, color = 'g')
+            plt.show(block = False)
+            raw_input()
+            z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*t:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(t+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+            probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+            plt.show(block = False)
+            raw_input()
 
 print "There are ",
 print Nt/plotSpacingT,
 print " number of frames."
 print "press enter to go to next frame"
-if numOfDim == 2 and animationType2D == "frameByFrame":
-    for t in range(0,Nt/plotSpacingT):
-        plt.cla()
-        z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*t:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(t+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
-        probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-        plt.show(block = False)
-        raw_input()
+
 
 # initialization function: plot the background of each frame
 def init1D():

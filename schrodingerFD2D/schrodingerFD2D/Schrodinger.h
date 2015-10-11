@@ -64,7 +64,7 @@ private:
     unsigned int startX2;
     unsigned int startX3;
     double V0; // referance potential
-    double VThickness; // referance thickness
+    double VThickness; // potential thickness
     double Vmax;
     double startEnergy;
     double finalEnergy;
