@@ -62,9 +62,10 @@ void Schrodinger::run(Situation situation, string filename){
             probDistrb = GAUSSIAN_2D;
             plotSpacingX1 = 10;
             plotSpacingX2 = 5;
-            numOfFrames = 200;
+            numOfFrames = 10;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
+            Nt = 10000;
             p = 10;
             break;
         case ELECTRON_CONST_BARRIER_1D:
@@ -146,6 +147,9 @@ void Schrodinger::run(Situation situation, string filename){
     setV();
     
     dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    if (numOfDim ==2){
+        dt = 0.0001;
+    }
     if (dt == 0){
         dt = DBL_MIN;
         cout << "Uses smallest possible double as timestep, but it is still to big to garante for the error." << endl;
@@ -276,12 +280,12 @@ void Schrodinger::makeInitState(){
             }
             break;
         case GAUSSIAN_2D:
-            for (int x1 = 0; x1 < Nx1; x1++){
-                for (int x2 = 0; x2 < Nx2; x2++){
-                    psi_r1[x1 * Nx2 + x2] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx1 * (x2 - startX2), 2) / (2 * SDx2)) * cos(p * (dx1 * x1));
-                    psi_r2[x1 * Nx2 + x2] = 0;
-                    psi_i1[x1 * Nx2 + x2] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * sin(p * (dx1 * x1));
-                    psi_i2[x1 * Nx2 + x2] = 0;
+            for (int x2 = 0; x2 < Nx2; x2++){
+                for (int x1 = 0; x1 < Nx1; x1++){
+                    psi_r1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * cos(p * (dx1 * x1));
+                    psi_r2[Nx1*x2 + x1] = 0;
+                    psi_i1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * sin(p * (dx1 * x1));
+                    psi_i2[Nx1*x2 + x1] = 0;
                 }
             }
             break;
@@ -341,7 +345,14 @@ void Schrodinger::finiteDifference2D(){
     FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), "wb");
     double c1x1 = hbar * dt / dx1 / dx1;
     double c1x2 = hbar * dt / dx2 / dx2;
+    c1x1 = 0.01;
+    c1x2 = 0.01;
     double c2 = dt / hbar;
+    cout << c1x1 << endl;
+    cout << c1x2 << endl;
+    if (c1x1 == 0 || c1x2 == 0){
+        cout << "c1x1 or c1x2 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
+    }
     for (int t = 0; t < Nt; t++){
         double possibility;
         if (t % plotSpacingT == 0){
