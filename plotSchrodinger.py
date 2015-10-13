@@ -17,6 +17,7 @@ from matplotlib import cm
 import pylab
 import os
 import time
+import math
 
 
 # find location of file, 'name'
@@ -136,7 +137,7 @@ if numOfDim == 2:
     plt.cla()
     z = plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    probPlot = ax.counturf(x1, x2, z, 25);
+    probPlot = plt.contourf(x1, x2, z, cmap=plt.cm.Greens);
 
 
 # initialization function: plot the background of each frame
@@ -149,7 +150,7 @@ def init1D():
     return probPlot, psiRPlot, psiIPlot, energyPlot,
 
 def init2D():
-    probPlot = ax.counturf([], [], [], 25)
+    probPlot = plt.contourf([], [], [], 25)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
     return probPlot,
 
@@ -167,7 +168,7 @@ def animate1D(i):
 def animate2D(i, x1, x2, probPlot):
     z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    probPlot = ax.counturf(x1, x2, z, 25)
+    probPlot = plt.contourf(x1, x2, z, coloring='RdYlBu')
     return probPlot,
 
 def animate3D(i):
@@ -177,11 +178,11 @@ def animate3D(i):
 # call the animator.  blit=True means only re-draw the parts that have changed.
 startTime = time.clock()
 anim = None
-print Nt/plotSpacingT * 50 / 1000
+animationTime = 10; #sec
 if numOfDim == 1:
     anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
-elif numOfDim == 2 and animationType2D == "animation":
-    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=20, blit=False, repeat = False, fargs=(x1,x2,probPlot))
+elif numOfDim == 2:
+    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=1000*animationTime/Nt*plotSpacingT, blit=False, repeat = False, fargs=(x1,x2,probPlot))
 elif numOfDim == 3:
     anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 
@@ -190,7 +191,7 @@ elif numOfDim == 3:
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
-anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
+anim.save('basic_animation.mp4', fps=Nt/plotSpacingT/animationTime, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
 print "Seconds used to run animation: ",
 print time.clock() - startTime

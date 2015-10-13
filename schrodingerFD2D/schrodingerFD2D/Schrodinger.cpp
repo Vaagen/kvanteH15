@@ -254,7 +254,7 @@ void Schrodinger::setV(){
             double nextSlitX2 = 0; // to keep track of where to place next slit
             // Placing first slit, if odd number of slits.
             if (slitNumber % 2 == 0){
-                nextSlitX2 = slitDistance/2;
+                nextSlitX2 = slitDistance/(dx2*2);
             }else if (slitsPlaced % 2 == 1){
                 for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
                     for (int x2 = Nx2/2 - slitWidth/(dx2*2); x2 < Nx2/2 + slitWidth/(dx2*2); x2++){
