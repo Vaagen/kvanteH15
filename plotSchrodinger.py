@@ -3,7 +3,6 @@
 # as well as placing these files in the same directory as this file, 'plotSchroinger.py', or in a subdirectory of this directory
 
 fileName = "test_free_electron"
-animationType2D = "frameByFrame" #"frameByFrame"  #choose between "animation" or "frameByFrame"
 
 # one should not be needing to do changes to the rest of the script
 
@@ -104,7 +103,7 @@ print " times the start energy."
 print "The final probability of finding the particle is: ",
 print finalProb
 
-# get data from plotFile
+# get data from xFile'ene
 dt = np.dtype("f8")
 plotProbabilityFile = np.fromfile(find(fileName + "_plot_probability"), dtype=dt)
 plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
@@ -112,12 +111,7 @@ plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
 
 
-'''
-x = np.linspace(0,Lx1,Nx1/plotSpacingX1)
-plt.plot(x, plotPsiRFile[0:Nx1/plotSpacingX1], 'r.')
-plt.plot(x, plotPsiRFile[100*Nx1/plotSpacingX1:(100+1)*Nx1/plotSpacingX1], 'g.')
-plt.show()
-'''
+
 
 fig = plt.figure()
 
@@ -140,26 +134,9 @@ if numOfDim == 1:
     pylab.fill(x1, scaleConstEnergy * potentialFile, facecolor='y', alpha=0.2, zorder=0)
 if numOfDim == 2:
     plt.cla()
-    ax = fig.gca(projection = '3d')
     z = plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False);
-    if animationType2D == "frameByFrame":
-        for t in range(0,Nt/plotSpacingT):
-            plt.cla()
-            pot = potentialFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
-            ax.plot_surface(x1, x2, scaleConstEnergy * pot, color = 'g')
-            plt.show(block = False)
-            raw_input()
-            z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*t:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(t+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
-            probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-            plt.show(block = False)
-            raw_input()
-
-print "There are ",
-print Nt/plotSpacingT,
-print " number of frames."
-print "press enter to go to next frame"
+    probPlot = ax.counturf(x1, x2, z, 25);
 
 
 # initialization function: plot the background of each frame
@@ -172,7 +149,7 @@ def init1D():
     return probPlot, psiRPlot, psiIPlot, energyPlot,
 
 def init2D():
-    probPlot = ax.plot_surface([], [], [], rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    probPlot = ax.counturf([], [], [], 25)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
     return probPlot,
 
@@ -190,7 +167,7 @@ def animate1D(i):
 def animate2D(i, x1, x2, probPlot):
     z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    probPlot = ax.plot_surface(x1, x2, z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    probPlot = ax.counturf(x1, x2, z, 25)
     return probPlot,
 
 def animate3D(i):
@@ -204,7 +181,7 @@ print Nt/plotSpacingT * 50 / 1000
 if numOfDim == 1:
     anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 elif numOfDim == 2 and animationType2D == "animation":
-    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=500, blit=False, repeat = False, fargs=(x1,x2,probPlot))
+    anim = animation.FuncAnimation(fig, animate2D, frames = Nt/plotSpacingT, interval=20, blit=False, repeat = False, fargs=(x1,x2,probPlot))
 elif numOfDim == 3:
     anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
 
@@ -213,10 +190,7 @@ elif numOfDim == 3:
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
-#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
-if numOfDim != 2 or animationType2D == "animation":
-    plt.show(block = False) # the 'block = False' somehow makes the animation unstable and make it randomly quit prematurly
+anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
-plt.close()
 print "Seconds used to run animation: ",
 print time.clock() - startTime
