@@ -191,7 +191,7 @@ elif numOfDim == 3:
 # the video can be embedded in html5.  You may need to adjust this for
 # your system: for more information, see
 # http://matplotlib.sourceforge.net/api/animation_api.html
-anim.save('basic_animation.mp4', fps=Nt/plotSpacingT/animationTime, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
+anim.save('animMovies/basic_animation.mp4', fps=Nt/plotSpacingT/animationTime, extra_args=['-vcodec', 'libx264', '-pix_fmt', 'yuv420p'])
 
 print "Seconds used to run animation: ",
 print time.clock() - startTime
