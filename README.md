@@ -50,3 +50,6 @@ git clean
 
 git show-branch
     Viser info om branches, se https://wincent.com/wiki/Understanding_the_output_of_%22git_show-branch%22
+
+git checkout -- .
+    Fjerner alle unstaged endringer
