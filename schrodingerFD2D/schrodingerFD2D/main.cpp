@@ -13,14 +13,17 @@
 using namespace std;
 
 int main(int argc, const char * argv[]) {
+    
     clock_t t = clock() / CLOCKS_PER_SEC;
     Schrodinger s;
     //s.run(FREE_ELECTRON_1D, "test_free_electron");
     //s.run(ELECTRON_CONST_BARRIER_1D, "test_free_electron");
-    s.run(FREE_ELECTRON_2D, "test_free_electron");
     //s.run(ELECTRON_TRIANGLE_1D, "test_free_electron");
-    //s.run(ELECTRON_MULTIPLE_SLIT_2D, "test_free_electron");
+    //s.run(FREE_ELECTRON_2D, "test_free_electron");
+    //s.run(ELECTRON_CONST_BARRIER_2D, "test_free_electron");
+    s.run(ELECTRON_MULTIPLE_SLIT_2D, "test_free_electron");
     //s.continueSimulation("test_free_electron", 1000);
+    
     long time = static_cast<long>(clock() - t) / CLOCKS_PER_SEC;
     cout << "The simulation used " << time / 60 << " minuttes and " << time % 60 << " seconds." << endl;
 }

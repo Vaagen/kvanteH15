@@ -49,10 +49,10 @@ private:
     double Lx1;
     double Lx2;
     double Lx3;
-    unsigned int Nx1;
-    unsigned int Nx2;
-    unsigned int Nx3;
-    unsigned int Nt; //number of timesteps
+    int Nx1;
+    int Nx2;
+    int Nx3;
+    int Nt; //number of timesteps
     double dx1;
     double dx2;
     double dx3;
@@ -60,9 +60,9 @@ private:
     double m;
     double p;
     double k;
-    unsigned int startX1;
-    unsigned int startX2;
-    unsigned int startX3;
+    int startX1;
+    int startX2;
+    int startX3;
     double V0; // referance potential
     double VThickness; // potential thickness
     double Vmax;

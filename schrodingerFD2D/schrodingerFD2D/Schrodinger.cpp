@@ -17,9 +17,9 @@ void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
     this->filename = filename;
     numOfDim = 1;
-    Lx1 = 0.001;
-    Lx2 = 0.0005;
-    Lx3 = 0.001;
+    Lx1 = 1.0 * pow(10, -9);
+    Lx2 = 5.0 * pow(10, -10);
+    Lx3 = 1.0 * pow(10, -7);
     Nx1 = 1200;
     Nx2 = 500;
     Nx3 = 1000;
@@ -31,20 +31,21 @@ void Schrodinger::run(Situation situation, string filename){
     startEnergy = 0.0;
     finalEnergy = 0.0;
     
-    SDx1 = 2 * Lx1 * Lx1 * Lx1;
-    SDx2 = Lx2 * Lx2 * Lx2;
+    SDx1 = 2 * Lx1 * Lx1 / 1000;
+    SDx2 = Lx2 * Lx2 / 1000;
     SDx3 = Lx3 * Lx3 * Lx3;
     
     plotSpacingX1 = 1;
     plotSpacingX2 = 1;
     plotSpacingX3 = 1;
     
-    double numOfFrames = 500;
+    double numOfFrames = 100;
     
     // set the situation
     // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
+            Nx1 = 1200;
             numOfDim = 1;
             m = pow(10, -30);
             potential = FREE;
@@ -69,11 +70,12 @@ void Schrodinger::run(Situation situation, string filename){
             p = 10;
             break;
         case ELECTRON_CONST_BARRIER_1D:
+            Nx1 = 1200;
             numOfDim = 1;
             m = pow(10, -30);
             potential = CONST_BARRIER_1D;
             V0 = pow(10, -28);
-            VThickness = 0.0001;
+            VThickness = 10;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
@@ -81,6 +83,7 @@ void Schrodinger::run(Situation situation, string filename){
             Nt = 100000;
             break;
         case ELECTRON_TRIANGLE_1D:
+            Nx1 = 1200;
             numOfDim = 1;
             m = pow(10, -30);
             potential = TRIANGLE_1D;
@@ -100,6 +103,11 @@ void Schrodinger::run(Situation situation, string filename){
             probDistrb = GAUSSIAN_2D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
+            V0 = -pow(10, -50);
+            VThickness = Lx1/2;
+            plotSpacingX1 = 20;
+            plotSpacingX2 = 10;
+            Nt = 1000;
             p = 10;
             break;
         case ELECTRON_MULTIPLE_SLIT_2D:
@@ -108,14 +116,14 @@ void Schrodinger::run(Situation situation, string filename){
             Lx2 = 0.00004;
             Nx1 = 700;
             Nx2 = 400;
-            VThickness = Lx1 / 100;
+            VThickness = Lx1 / 5;
             m = pow(10, -30);
+            V0 = -pow(10, -50);
             potential = MULTIPLE_SLIT_2D;
             probDistrb = GAUSSIAN_2D;
             plotSpacingX1 = 10;
             plotSpacingX2 = 5;
-            numOfFrames = 20;
-            Nt = 10000;
+            Nt = 1000;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
@@ -155,7 +163,8 @@ void Schrodinger::run(Situation situation, string filename){
     
     setV();
     
-    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.00000000000001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    //dt = 0.0005 * dx1 * dx1 / hbar;
     if (numOfDim ==2){
         dt = 0.0001;
     }
@@ -305,12 +314,13 @@ void Schrodinger::makeInitState(){
         case GAUSSIAN_2D:
             for (int x2 = 0; x2 < Nx2; x2++){
                 for (int x1 = 0; x1 < Nx1; x1++){
-                    psi_r1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * cos(p * (dx1 * x1));
+                    psi_r1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * cos(k * (dx1 * x1));
                     psi_r2[Nx1*x2 + x1] = 0;
-                    psi_i1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * sin(p * (dx1 * x1));
+                    psi_i1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * sin(k * (dx1 * x1));
                     psi_i2[Nx1*x2 + x1] = 0;
                 }
             }
+            cout << endl;
             break;
             
         default:
@@ -373,19 +383,18 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
     FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
     double c1x1 = hbar * dt / dx1 / dx1;
     double c1x2 = hbar * dt / dx2 / dx2;
-    c1x1 = 0.0005;
-    c1x2 = 0.0005;
     double c2 = dt / hbar;
     cout << "c1x1: " << c1x1 << endl;
     cout << "c1x2: " << c1x2 << endl;
+    cout << "c2:   " << c2 << endl;
     if (c1x1 == 0 || c1x2 == 0){
         cout << "c1x1 or c1x2 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
     }
     for (int t = 0; t < Nt; t++){
         double possibility;
         if (t % plotSpacingT == 0){
-            for (int x2 = 1; x2 < Nx2 - 1; x2+=plotSpacingX2){
-                for (int x1 = 1; x1 < Nx1 - 1; x1+=plotSpacingX1){
+            for (int x2 = 0; x2 < Nx2; x2+=plotSpacingX2){
+                for (int x1 = 0; x1 < Nx1; x1+=plotSpacingX1){
                     possibility = psi_r1[x2*Nx1 + x1] * psi_r1[x2*Nx1 + x1] + psi_i1[x2*Nx1 + x1] * psi_i1[x2*Nx1 + x1];
                     fwrite(&possibility, sizeof(double), 1, plotProbabilityFile);
                 }
@@ -469,7 +478,6 @@ void Schrodinger::normalizePsi(){
             }
         }
     }
-    
 }
 
 double Schrodinger::findProbability(){
