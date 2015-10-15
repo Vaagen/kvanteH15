@@ -132,6 +132,16 @@ void Schrodinger::run(Situation situation, string filename){
             // slitWidth, width of each slit
             // slitDistance, distance between each slit
             break;
+        case ELECTRON_BALL_2D:
+            // dx1 must equal dx2 for the potential to become a ball
+            numOfDim = 2;
+            V0 = pow(10, -50);
+            m = pow(10, -30);
+            probDistrb = GAUSSIAN_2D;
+            potential = BALL_2D;
+            plotSpacingX1 = 10;
+            plotSpacingX2 = 5;
+            VThickness = Lx1 / 5;
         default:
             break;
     }
@@ -285,6 +295,34 @@ void Schrodinger::setV(){
                 nextSlitX2 += slitWidth + slitDistance;
             }
             Vmax = V0;
+            break;}
+        {case CIRCLE_2D:
+            int radius = VThickness / dx1;
+            int centerX1 = Nx1/2 + radius;
+            int centerX2 = Nx2/2;
+            for (int x2 = 0; x2 < Nx2; x2++){
+                for (int x1 = 0; x1 < Nx1; x1++){
+                    if (pow(x1-centerX1,2)+pow(x2-centerX2,2)<pow(radius,2)) {
+                        V[Nx1*x2 + x1] = V0;
+                    } else {
+                        V[Nx1*x2 + x1] = 0;
+                    }
+                }
+            }
+            break;}
+        {case BALL_2D:
+            int radius = VThickness / dx1;
+            int centerX1 = Nx1/2 + radius;
+            int centerX2 = Nx2/2;
+            for (int x2 = 0; x2 < Nx2; x2++){
+                for (int x1 = 0; x1 < Nx1; x1++){
+                    if (pow(x1-centerX1,2)+pow(x2-centerX2,2)<pow(radius,2)) {
+                        V[Nx1*x2 + x1] = V0*(pow(radius,2)-(pow(x1-centerX1,2)+pow(x2-centerX2,2)));
+                    } else {
+                        V[Nx1*x2 + x1] = 0;
+                    }
+                }
+            }
             break;}
         default:
             break;

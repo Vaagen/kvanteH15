@@ -131,12 +131,7 @@ x2 = np.linspace(0,Lx2,Nx2/plotSpacingX2)
 x3 = np.linspace(0,Lx3,Nx3/plotSpacingX3)
 
 scaleConstEnergy = 0.5 * max(plotProbabilityFile) / startEnergy
-"""
-if numOfDim == 1:
-    plt.legend(loc = 'lower right')
-    plt.plot(x1, scaleConstEnergy * potentialFile, ':k', zorder=0)
-    pylab.fill(x1, scaleConstEnergy * potentialFile, facecolor='y', alpha=0.2, zorder=0)
-"""
+
 # initialization function: plot the background of each frame
 def init1D():
     plt.plot(x1, scaleConstEnergy * potentialFile, ':k', zorder=0)
