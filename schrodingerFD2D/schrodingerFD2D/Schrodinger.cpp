@@ -45,14 +45,15 @@ void Schrodinger::run(Situation situation, string filename){
     // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
-            Nx1 = 200;
+            Nx1 = 1200;
             numOfDim = 1;
-            m = pow(10, -30);
+            m = pow(10, 0);
+            Lx1 = 1200;
             potential = FREE;
             probDistrb = GAUSSIAN_1D;
-            //SDx1 = SDx1;
+            SDx1 = 40.0;
             p = 2000 * m;
-            Nt = 10000000;
+            Nt = 65;
             break;
         case ELECTRON_CONST_BARRIER_1D:
             Nx1 = 500;
@@ -163,7 +164,7 @@ void Schrodinger::run(Situation situation, string filename){
     startX1 = Nx1 / 3;
     startX2 = Nx2 / 2;
     startX3 = Nx3 / 2;
-    plotSpacingT = Nt/numOfFrames;
+    plotSpacingT = 1; //Nt/numOfFrames;
     
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
@@ -175,7 +176,7 @@ void Schrodinger::run(Situation situation, string filename){
     
     setV();
     
-    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.00001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
     //dt = 0.0005 * dx1 * dx1 / hbar;
     if (numOfDim ==2){
         dt = 10;

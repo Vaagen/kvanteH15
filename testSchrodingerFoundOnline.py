@@ -42,12 +42,12 @@ def fillax(x,y,*args,**kw):
 #  variables so they become floats instead of integers.
 #
 N    = 1200     #  Number of spatial points.
-T    = 5*N      #  Number of time steps.  5*N is a nice value for terminating
+T    = 1000000      #  Number of time steps.  5*N is a nice value for terminating
 #  before anything reaches the boundaries.
 Tp   = 50       #  Number of time steps to increment before updating the plot.
 dx   = 1.0e0    #  Spatial resolution
 m    = 1.0e0    #  Particle mass
-hbar = 1.0e0    #  Plank's constant
+hbar = 1.0e-1    #  Plank's constant
 X    = dx*np.linspace(0,N,N)        #  Spatial axis.
 # Potential parameters.  By playing with the type of potential and the height
 # and thickness (for barriers), you'll see the various transmission/reflection

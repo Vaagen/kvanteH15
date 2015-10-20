@@ -42,7 +42,7 @@ public:
     ~Schrodinger();
 private:
 // VARIABLES FOR SIMULATION
-    const double hbar = 1.0545718 * pow(10, -34);
+    const double hbar = 1.0; // 1.0545718 * pow(10, -34);
     
     string filename;
     unsigned int numOfDim;
@@ -78,10 +78,10 @@ private:
     double SDx2; // uncertity in position
     double SDx3; // uncertity in position
     
-    unsigned int plotSpacingX1; //steps between x1 plotted
-    unsigned int plotSpacingX2; //steps between x2 plotted
-    unsigned int plotSpacingX3; //steps between x3 plotted
-    unsigned int plotSpacingT; //steps between t plotted
+    int plotSpacingX1; //steps between x1 plotted
+    int plotSpacingX2; //steps between x2 plotted
+    int plotSpacingX3; //steps between x3 plotted
+    int plotSpacingT; //steps between t plotted
     
     double* V;
     double* psi_r1; //real part of wave function
