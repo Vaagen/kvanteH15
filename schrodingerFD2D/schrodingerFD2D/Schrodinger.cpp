@@ -17,8 +17,8 @@ void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
     this->filename = filename;
     numOfDim = 1;
-    Lx1 = 1.0 * pow(10, -9);
-    Lx2 = 5.0 * pow(10, -10);
+    Lx1 = 1.0 * pow(10, -3);
+    Lx2 = 5.0 * pow(10, -4);
     Lx3 = 1.0 * pow(10, -7);
     Nx1 = 1200;
     Nx2 = 500;
@@ -31,9 +31,9 @@ void Schrodinger::run(Situation situation, string filename){
     startEnergy = 0.0;
     finalEnergy = 0.0;
     
-    SDx1 = 2 * Lx1 * Lx1 / 1000;
-    SDx2 = Lx2 * Lx2 / 1000;
-    SDx3 = Lx3 * Lx3 * Lx3;
+    SDx1 = Lx1 / 16;
+    SDx2 = Lx2 / 16;
+    SDx3 = Lx3 / 16;
     
     plotSpacingX1 = 1;
     plotSpacingX2 = 1;
@@ -45,42 +45,27 @@ void Schrodinger::run(Situation situation, string filename){
     // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
-            Nx1 = 1200;
+            Nx1 = 200;
             numOfDim = 1;
             m = pow(10, -30);
             potential = FREE;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
-            //SDx2 = SDx2;
             p = 2000 * m;
-            Nt = 100000;
-            break;
-        case FREE_ELECTRON_2D:
-            numOfDim = 2;
-            Nx1 = 1000;
-            m = pow(10, -30);
-            potential = FREE;
-            probDistrb = GAUSSIAN_2D;
-            plotSpacingX1 = 10;
-            plotSpacingX2 = 5;
-            numOfFrames = 20;
-            //SDx1 = SDx1;
-            //SDx2 = SDx2;
-            Nt = 1000;
-            p = 10;
+            Nt = 10000000;
             break;
         case ELECTRON_CONST_BARRIER_1D:
-            Nx1 = 1200;
+            Nx1 = 500;
             numOfDim = 1;
             m = pow(10, -30);
             potential = CONST_BARRIER_1D;
-            V0 = pow(10, -28);
-            VThickness = 10;
+            V0 = 2.0 * pow(10, -28);
+            VThickness = Lx1 / 10;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
             //SDx2 = SDx2;
             p = 10;
-            Nt = 100000;
+            Nt = 1000000;
             break;
         case ELECTRON_TRIANGLE_1D:
             Nx1 = 1200;
@@ -91,10 +76,22 @@ void Schrodinger::run(Situation situation, string filename){
             VThickness = Lx1/100;
             probDistrb = GAUSSIAN_1D;
             //SDx1 = SDx1;
-            //SDx2 = SDx2;
             p = 10;
             Nt = 100000;
             // VdistanceToMax is distance from Lx1/2 to max of V, value is set in setV() under case: TRIANGLE_1D
+            break;
+        case FREE_ELECTRON_2D:
+            numOfDim = 2;
+            Nx1 = 500;
+            Nx2 = 250;
+            m = pow(10, -30);
+            potential = FREE;
+            probDistrb = GAUSSIAN_2D;
+            plotSpacingX1 = 1;
+            plotSpacingX2 = 1;
+            //SDx1 = SDx1;
+            Nt = 10000;
+            p = 10;
             break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
@@ -135,13 +132,16 @@ void Schrodinger::run(Situation situation, string filename){
         case ELECTRON_BALL_2D:
             // dx1 must equal dx2 for the potential to become a ball
             numOfDim = 2;
-            V0 = pow(10, -50);
+            Nx1 = 150;
+            Nx2 = 100;
+            V0 = pow(10, -40);
             m = pow(10, -30);
             probDistrb = GAUSSIAN_2D;
             potential = BALL_2D;
-            plotSpacingX1 = 10;
-            plotSpacingX2 = 5;
+            plotSpacingX1 = 6;
+            plotSpacingX2 = 4;
             VThickness = Lx1 / 5;
+            Nt = 100;
         default:
             break;
     }
@@ -160,7 +160,7 @@ void Schrodinger::run(Situation situation, string filename){
     dx2 = Lx2 / Nx2;
     dx3 = Lx3 / Nx3;
     k = 2 * 3.1415926535897 * 30 / Lx1; //p/hbar;
-    startX1 = Nx1 / 4;
+    startX1 = Nx1 / 3;
     startX2 = Nx2 / 2;
     startX3 = Nx3 / 2;
     plotSpacingT = Nt/numOfFrames;
@@ -170,13 +170,15 @@ void Schrodinger::run(Situation situation, string filename){
     psi_i1 = new double [Nx1 * Nx2 * Nx3];
     psi_r2 = new double [Nx1 * Nx2 * Nx3];
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
+    psi_r3 = new double [Nx1 * Nx2 * Nx3];
+    psi_i3 = new double [Nx1 * Nx2 * Nx3];
     
     setV();
     
-    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.00000000000001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
+    dt = hbar/(hbar * hbar/(2*m*dx1*dx1) + Vmax) * 0.00001;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
     //dt = 0.0005 * dx1 * dx1 / hbar;
     if (numOfDim ==2){
-        dt = 0.0001;
+        dt = 10;
     }
     if (dt == 0){
         dt = DBL_MIN;
@@ -201,6 +203,9 @@ void Schrodinger::continueSimulation(string filename, unsigned int numOfTimestep
     psi_i1 = new double [Nx1 * Nx2 * Nx3];
     psi_r2 = new double [Nx1 * Nx2 * Nx3];
     psi_i2 = new double [Nx1 * Nx2 * Nx3];
+    psi_r3 = new double [Nx1 * Nx2 * Nx3];
+    psi_i3 = new double [Nx1 * Nx2 * Nx3];
+
     setV();
     loadFinalState();
     finiteDifference(false);
@@ -309,6 +314,7 @@ void Schrodinger::setV(){
                     }
                 }
             }
+            Vmax = V0;
             break;}
         {case BALL_2D:
             int radius = VThickness / dx1;
@@ -323,6 +329,7 @@ void Schrodinger::setV(){
                     }
                 }
             }
+            Vmax = V0;
             break;}
         default:
             break;
@@ -343,19 +350,23 @@ void Schrodinger::makeInitState(){
     switch (probDistrb) {
         case GAUSSIAN_1D:
             for (int x1 = 0; x1 < Nx1; x1++){
-                psi_r1[x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1)) * cos(k * dx1 * x1);
+                psi_r1[x1] = exp(-pow(dx1 * (x1 - startX1) / SDx1, 2) / 2) * cos(k * dx1 * x1);
                 psi_r2[x1] = 0;
-                psi_i1[x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1)) * sin(k * dx1 * x1);
+                psi_r3[x1] = 0;
+                psi_i1[x1] = exp(-pow(dx1 * (x1 - startX1) / SDx1, 2) / 2) * sin(k * dx1 * x1);
                 psi_i2[x1] = 0;
+                psi_i3[x1] = 0;
             }
             break;
         case GAUSSIAN_2D:
             for (int x2 = 0; x2 < Nx2; x2++){
                 for (int x1 = 0; x1 < Nx1; x1++){
-                    psi_r1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * cos(k * (dx1 * x1));
+                    psi_r1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1) / SDx1, 2) / 2 - pow(dx2 * (x2 - startX2) / SDx1, 2) / 2) * cos(k * (dx1 * x1));
                     psi_r2[Nx1*x2 + x1] = 0;
-                    psi_i1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1), 2) / (2 * SDx1) - pow(dx2 * (x2 - startX2), 2) / (2 * SDx2)) * sin(k * (dx1 * x1));
+                    psi_r3[Nx1*x2 + x1] = 0;
+                    psi_i1[Nx1*x2 + x1] = exp(-pow(dx1 * (x1 - startX1) / SDx1, 2) / 2 - pow(dx2 * (x2 - startX2) / SDx1, 2) / 2) * sin(k * (dx1 * x1));
                     psi_i2[Nx1*x2 + x1] = 0;
+                    psi_i3[Nx1*x2 + x1] = 0;
                 }
             }
             cout << endl;
@@ -381,6 +392,7 @@ void Schrodinger::finiteDifference(bool newSimulation){
         finiteDifference3D(fileOpenType);
     }
     finalStore();
+    cout << "The start energy is: " << startEnergy << " and the highest potential is: " << Vmax << endl;
     cout << "The final energy is " << finalEnergy/startEnergy << " times the start energy." << endl;
     cout << "The final probability of finding the particle is: " << finalProb << endl;
 }
@@ -389,11 +401,16 @@ void Schrodinger::finiteDifference1D(char* fileOpenType){
     FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
     FILE* plotPsiRFile = fopen((filename + "_plot_psi_r").c_str(), fileOpenType);
     FILE* plotPsiIFile = fopen((filename + "_plot_psi_i").c_str(), fileOpenType);
-    double c1 = (dt / 2 / m / dx1 / dx1) * hbar;
-    double c2 = dt / hbar;
-    cout << c1 << endl;
+    double c1 = hbar * dt / m / dx1 / dx1;
+    double c2 = 2 * dt / hbar;
+    cout << "c1: " << c1 << endl;
+    cout << "c2: " << c2 << endl;
     if (c1 == 0){
         cout << "c1 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
+    }
+    for (int x = 1; x < Nx1 - 1; x++){
+        psi_r2[x] = psi_r1[x] + (c1 + c2 / 2 * V[x]) * psi_i1[x] - c1 / 2 * (psi_i1[x + 1] + psi_i1[x - 1]);
+        psi_i2[x] = psi_i1[x] - (c1 + c2 / 2 * V[x]) * psi_r1[x] + c1 / 2 * (psi_r1[x + 1] + psi_r1[x - 1]);
     }
     for (int t = 0; t < Nt; t++){
         double possibility;
@@ -406,10 +423,16 @@ void Schrodinger::finiteDifference1D(char* fileOpenType){
             }
         }
         for (int x = 1; x < Nx1 - 1; x++){
-            psi_r2[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i1[x] - c1 * psi_i1[x + 1] - c1 * psi_i1[x - 1];
-            psi_i2[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_r1[x] + c1 * psi_r1[x + 1] + c1 * psi_r1[x - 1];
-            psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * psi_i2[x + 1] - c1 * psi_i2[x - 1];
-            psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_r2[x] + c1 * psi_r2[x + 1] + c1 * psi_r2[x - 1];
+            psi_r3[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * (psi_i2[x + 1] + psi_i2[x - 1]);
+            psi_i3[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_r2[x] + c1 * (psi_r2[x + 1] + psi_r1[x - 1]);
+        }
+        for (int x = 1; x < Nx1 - 1; x++){
+            psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i3[x] - c1 * (psi_i3[x + 1] + psi_i3[x - 1]);
+            psi_i1[x] = psi_i2[x] - (2 * c1 + c2 * V[x]) * psi_r3[x] + c1 * (psi_r3[x + 1] + psi_r3[x - 1]);
+        }
+        for (int x = 1; x < Nx1 - 1; x++){
+            psi_r2[x] = psi_r3[x] + (2 * c1 + c2 * V[x]) * psi_i1[x] - c1 * (psi_i1[x + 1] + psi_i1[x - 1]);
+            psi_i2[x] = psi_i3[x] - (2 * c1 + c2 * V[x]) * psi_r1[x] + c1 * (psi_r1[x + 1] + psi_r1[x - 1]);
         }
     }
     fclose(plotProbabilityFile);
@@ -428,6 +451,14 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
     if (c1x1 == 0 || c1x2 == 0){
         cout << "c1x1 or c1x2 is 0 and the wavefunction will not change. You will probably need to make dt bigger." << endl;
     }
+    int i;
+    for (int x2 = 1; x2 < Nx2 - 1; x2++){
+        for (int x1 = 1; x1 < Nx1 - 1; x1++){
+            i = Nx1*x2+x1;
+            psi_r2[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
+            psi_i2[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]);
+        }
+    }
     for (int t = 0; t < Nt; t++){
         double possibility;
         if (t % plotSpacingT == 0){
@@ -438,14 +469,25 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
                 }
             }
         }
-        int i;
         for (int x2 = 1; x2 < Nx2 - 1; x2++){
             for (int x1 = 1; x1 < Nx1 - 1; x1++){
                 i = Nx1*x2+x1;
-                psi_r2[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
-                psi_i2[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]);
-                psi_r1[i] = psi_r2[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i2[i-Nx1]);
-                psi_i1[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]);
+                psi_r3[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i2[i-Nx1]);
+                psi_i3[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]);
+            }
+        }
+        for (int x2 = 1; x2 < Nx2 - 1; x2++){
+            for (int x1 = 1; x1 < Nx1 - 1; x1++){
+                i = Nx1*x2+x1;
+                psi_r1[i] = psi_r2[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i3[i] - c1x1*(psi_i3[i+1] + psi_i3[i-1]) - c1x2*(psi_i3[i+Nx1] + psi_i3[i-Nx1]);
+                psi_i1[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r3[i] + c1x1*(psi_r3[i+1] + psi_r3[i-1]) + c1x2*(psi_r3[i+Nx1] + psi_r3[i-Nx1]);
+            }
+        }
+        for (int x2 = 1; x2 < Nx2 - 1; x2++){
+            for (int x1 = 1; x1 < Nx1 - 1; x1++){
+                i = Nx1*x2+x1;
+                psi_r2[i] = psi_r3[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
+                psi_i2[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]);
             }
         }
     }
@@ -458,6 +500,16 @@ void Schrodinger::finiteDifference3D(char* fileOpenType){
     double c1x2 = hbar * dt / dx2 / dx2;
     double c1x3 = hbar * dt / dx3 / dx3;
     double c2 = dt / hbar;
+    int i;
+    for (int x3 = 1; x3 < Nx3 - 1; x3++){
+        for (int x2 = 1; x2 < Nx2 - 1; x2++){
+            for (int x1 = 1; x1 < Nx1 - 1; x1++){
+                i = Nx1*Nx2*x3+Nx1*x2+x1;
+                psi_r2[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]) - c1x3*(psi_i1[i+Nx1*Nx2] + psi_i1[i-Nx1*Nx2]);
+                psi_i2[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]) + c1x3*(psi_r1[i+Nx1*Nx2] + psi_r1[i-Nx1*Nx2]);
+            }
+        }
+    }
     for (int t = 0; t < Nt; t++){
         double possibility;
         if (t % plotSpacingT == 0){
@@ -470,15 +522,30 @@ void Schrodinger::finiteDifference3D(char* fileOpenType){
                 }
             }
         }
-        int i;
         for (int x3 = 1; x3 < Nx3 - 1; x3++){
             for (int x2 = 1; x2 < Nx2 - 1; x2++){
                 for (int x1 = 1; x1 < Nx1 - 1; x1++){
                     i = Nx1*Nx2*x3+Nx1*x2+x1;
-                    psi_r2[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]) - c1x3*(psi_i1[i+Nx1*Nx2] + psi_i1[i-Nx1*Nx2]);
-                    psi_i2[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]) + c1x3*(psi_r1[i+Nx1*Nx2] + psi_r1[i-Nx1*Nx2]);
-                    psi_r1[i] = psi_r2[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i2[i-Nx1]) - c1x3*(psi_i2[i+Nx1*Nx2] + psi_i2[i-Nx1*Nx2]);
-                    psi_i1[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]) + c1x3*(psi_r2[i+Nx1*Nx2] + psi_r2[i-Nx1*Nx2]);
+                    psi_r3[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i2[i-Nx1]) - c1x3*(psi_i2[i+Nx1*Nx2] + psi_i2[i-Nx1*Nx2]);
+                    psi_i3[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]) + c1x3*(psi_r2[i+Nx1*Nx2] + psi_r2[i-Nx1*Nx2]);
+                }
+            }
+        }
+        for (int x3 = 1; x3 < Nx3 - 1; x3++){
+            for (int x2 = 1; x2 < Nx2 - 1; x2++){
+                for (int x1 = 1; x1 < Nx1 - 1; x1++){
+                    i = Nx1*Nx2*x3+Nx1*x2+x1;
+                    psi_r1[i] = psi_r2[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i3[i] - c1x1*(psi_i3[i+1] + psi_i3[i-1]) - c1x2*(psi_i3[i+Nx1] + psi_i3[i-Nx1]) - c1x3*(psi_i3[i+Nx1*Nx2] + psi_i3[i-Nx1*Nx2]);
+                    psi_i1[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]) + c1x3*(psi_r1[i+Nx1*Nx2] + psi_r1[i-Nx1*Nx2]);
+                }
+            }
+        }
+        for (int x3 = 1; x3 < Nx3 - 1; x3++){
+            for (int x2 = 1; x2 < Nx2 - 1; x2++){
+                for (int x1 = 1; x1 < Nx1 - 1; x1++){
+                    i = Nx1*Nx2*x3+Nx1*x2+x1;
+                    psi_r2[i] = psi_r3[i] + (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]) - c1x3*(psi_i1[i+Nx1*Nx2] + psi_i1[i-Nx1*Nx2]);
+                    psi_i2[i] = psi_i3[i] - (2*c1x1 + 2*c1x2 + 2*c1x3 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]) + c1x3*(psi_r1[i+Nx1*Nx2] + psi_r1[i-Nx1*Nx2]);
                 }
             }
         }
@@ -559,7 +626,7 @@ double Schrodinger::findEnergy2D(){
     for (int x2 = 1; x2 < Nx2 - 1; x2++){
         for (int x1 = 1; x1 < Nx1 - 1; x1++){
             i = Nx1*x2 + x1;
-            energy += (cx1*(psi_r1[i]*(psi_r1[i+1]+psi_r1[i-1]) + psi_i1[i]*(psi_i1[i+1]+psi_i1[i-1])) + cx2*(psi_r1[i]*(psi_r1[i+Nx1]+psi_r1[i-Nx1]) + psi_i1[i]*(psi_i1[i+Nx1]+psi_i1[i-Nx1])) + (V[i]-2*cx1-2*cx2)*(psi_r1[i]*psi_r1[i] + psi_i1[i]*psi_i1[i]))*dx1;
+            energy += (cx1*(psi_r1[i]*(psi_r1[i+1]+psi_r1[i-1]) + psi_i1[i]*(psi_i1[i+1]+psi_i1[i-1])) + cx2*(psi_r1[i]*(psi_r1[i+Nx1]+psi_r1[i-Nx1]) + psi_i1[i]*(psi_i1[i+Nx1]+psi_i1[i-Nx1])) + (V[i]-2*cx1-2*cx2)*(psi_r1[i]*psi_r1[i] + psi_i1[i]*psi_i1[i]))*dx1*dx2;
         }
     }
     return energy;
@@ -575,7 +642,7 @@ double Schrodinger::findEnergy3D(){
         for (int x2 = 1; x2 < Nx2 - 1; x2++){
             for (int x1 = 1; x1 < Nx1 - 1; x1++){
                 i = Nx1*Nx2*x3 + Nx1*x2 + x1;
-                energy += (cx1*(psi_r1[i]*(psi_r1[i+1]+psi_r1[i-1]) + psi_i1[i]*(psi_i1[i+1]+psi_i1[i-1])) + cx2*(psi_r1[i]*(psi_r1[i+Nx1]+psi_r1[i-Nx1]) + psi_i1[i]*(psi_i1[i+Nx1]+psi_i1[i-Nx1]))  + cx3*(psi_r1[i]*(psi_r1[i+Nx1*Nx2]+psi_r1[i-Nx1*Nx2]) + psi_i1[i]*(psi_i1[i+Nx1*Nx2]+psi_i1[i-Nx1*Nx2])) + (V[i]-2*cx1-2*cx2-2*cx3)*(psi_r1[i]*psi_r1[i] + psi_i1[i]*psi_i1[i]))*dx1;
+                energy += (cx1*(psi_r1[i]*(psi_r1[i+1]+psi_r1[i-1]) + psi_i1[i]*(psi_i1[i+1]+psi_i1[i-1])) + cx2*(psi_r1[i]*(psi_r1[i+Nx1]+psi_r1[i-Nx1]) + psi_i1[i]*(psi_i1[i+Nx1]+psi_i1[i-Nx1]))  + cx3*(psi_r1[i]*(psi_r1[i+Nx1*Nx2]+psi_r1[i-Nx1*Nx2]) + psi_i1[i]*(psi_i1[i+Nx1*Nx2]+psi_i1[i-Nx1*Nx2])) + (V[i]-2*cx1-2*cx2-2*cx3)*(psi_r1[i]*psi_r1[i] + psi_i1[i]*psi_i1[i]))*dx1*dx2*dx3;
             }
         }
     }

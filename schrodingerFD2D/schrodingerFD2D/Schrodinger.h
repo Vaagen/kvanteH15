@@ -52,7 +52,7 @@ private:
     int Nx1;
     int Nx2;
     int Nx3;
-    int Nt; //number of timesteps
+    int Nt; //number of timesteps divides by 3
     double dx1;
     double dx2;
     double dx3;
@@ -88,7 +88,8 @@ private:
     double* psi_i1; //imagenary part of wave funciton
     double* psi_r2; //real part of wave function
     double* psi_i2; //imagenary part of wave funciton
-
+    double* psi_r3; //real part of wave function
+    double* psi_i3; //imagenary part of wave funciton
     
 // MEMBER FUNCTIONS
     // spesifies the potential

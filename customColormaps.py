@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 blue_green = {'red': ((0.0, 0.0, 0.0),
                       (1.0, 0.0, 0.0)),
     

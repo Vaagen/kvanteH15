@@ -148,7 +148,6 @@ def init2D():
     plt.cla()
     z = potentialFile[0:Nx1*Nx2:plotSpacingX1].reshape(Nx2,Nx1/plotSpacingX1)[0:Nx2:plotSpacingX2,:]
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    #potentialPlot = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white'), zorder = 0)
     colorLimit = max(abs(potentialFile))
     if colorLimit == 0:
         colorLimit = 1
@@ -189,6 +188,7 @@ def animate3D(i):
     x2, x3 = np.meshgrid(np.linspace(0,Lx2,Nx2/plotSpacingX2), np.linspace(0,Lx3,Nx3/plotSpacingX3),)
     plt.sca(ax3)
     probPlot21 = plt.contourf(x2, x3, z21, cmap=plt.cm.autumn_r, alpha = 1, zorder = 1, label = 'yz-axis')
+    # http://stackoverflow.com/questions/9164950/python-matplotlib-plot3d-with-a-color-for-4d
     return
 
 
