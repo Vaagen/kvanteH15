@@ -30,7 +30,8 @@ public:
     void run(Situation situation, string filename);
     
     // continue previous simulation
-    void continueSimulation(string filename, unsigned int numOfTimesteps);
+    // appendOldFile = false will result in a new scaling of plot in plotSchrodinger.py
+    void continueSimulation(string filename, int numOfIterations, int numOfFrames, bool appendOldFile);
     
     // sets the referanse potential
     void setV0(double V0){this->V0 = V0;}
@@ -45,7 +46,7 @@ private:
     const double hbar = 1.0e0; // 1.0545718 * pow(10, -34);
     
     string filename;
-    unsigned int numOfDim;
+    int numOfDim;
     double Lx1;
     double Lx2;
     double Lx3;

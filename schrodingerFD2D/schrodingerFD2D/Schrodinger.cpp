@@ -117,14 +117,14 @@ void Schrodinger::run(Situation situation, string filename){
             break;
         case FREE_ELECTRON_2D:
             numOfDim = 2;
-            potential = CONST_BARRIER_1D;
-            probDistrb = GAUSSIAN_1D;
+            potential = FREE;
+            probDistrb = GAUSSIAN_2D;
             
             Lx1 = 800;
             Lx2 = 600;
             Lx3 = 1;
             
-            Nt = 100;
+            Nt = 10000;
             
             numOfFrames = 100;
             
@@ -148,35 +148,65 @@ void Schrodinger::run(Situation situation, string filename){
             break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
-            m = pow(10, -30);
             potential = CONST_BARRIER_2D;
             probDistrb = GAUSSIAN_2D;
-            //SDx1 = SDx1;
-            //SDx2 = SDx2;
-            V0 = -pow(10, -50);
-            VThickness = Lx1/2;
-            plotSpacingX1 = 20;
-            plotSpacingX2 = 10;
+            
+            Lx1 = 800;
+            Lx2 = 600;
+            Lx3 = 1;
+            
             Nt = 1000;
-            p = 10;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 800;
+            Nx2 = 600;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 2;
+            plotSpacingX2 = 2;
+            plotSpacingX3 = 1;
+            
+            V0 = 1.2e-2;
+            VThickness = Lx1 / 10;
+            
+            m = 1;
+            p = 1;
             break;
         case ELECTRON_MULTIPLE_SLIT_2D:
             numOfDim = 2;
-            Lx1 = 0.00007;
-            Lx2 = 0.00004;
-            Nx1 = 700;
-            Nx2 = 400;
-            VThickness = Lx1 / 5;
-            m = pow(10, -30);
-            V0 = -pow(10, -50);
             potential = MULTIPLE_SLIT_2D;
             probDistrb = GAUSSIAN_2D;
-            plotSpacingX1 = 10;
-            plotSpacingX2 = 5;
-            Nt = 1000;
-            //SDx1 = SDx1;
-            //SDx2 = SDx2;
-            p = 10;
+            
+            Lx1 = 800;
+            Lx2 = 600;
+            Lx3 = 1;
+            
+            Nt = 100;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 800;
+            Nx2 = 600;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 4;
+            plotSpacingX2 = 3;
+            plotSpacingX3 = 1;
+            
+            V0 = 1.2e-2;
+            VThickness = Lx1/20;
+            
+            m = 1;
+            p = 1;
             // The following variables are set in setV() under case: MULTIPLE_SLIT_2D
             // slitNumber, number of slits in barrier
             // slitWidth, width of each slit
@@ -185,16 +215,34 @@ void Schrodinger::run(Situation situation, string filename){
         case ELECTRON_BALL_2D:
             // dx1 must equal dx2 for the potential to become a ball
             numOfDim = 2;
-            Nx1 = 150;
-            Nx2 = 100;
-            V0 = pow(10, -40);
-            m = pow(10, -30);
-            probDistrb = GAUSSIAN_2D;
             potential = BALL_2D;
-            plotSpacingX1 = 6;
-            plotSpacingX2 = 4;
-            VThickness = Lx1 / 5;
-            Nt = 100;
+            probDistrb = GAUSSIAN_2D;
+            
+            Lx1 = 800;
+            Lx2 = 600;
+            Lx3 = 1;
+            
+            Nt = 10;
+            
+            numOfFrames = 10;
+            
+            Nx1 = 800;
+            Nx2 = 600;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 4;
+            plotSpacingX2 = 3;
+            plotSpacingX3 = 1;
+            
+            V0 = 1.2 * pow(10, -2);
+            VThickness = Lx1 / 10;
+            
+            m = 1;
+            p = 1;
         default:
             break;
     }
@@ -244,12 +292,14 @@ void Schrodinger::run(Situation situation, string filename){
     finiteDifference(true);
 }
 
-void Schrodinger::continueSimulation(string filename, unsigned int numOfTimesteps){
+void Schrodinger::continueSimulation(string filename, int numOfIterations, int numOfFrames, bool appendOldFile){
     this->filename = filename;
     loadVaiables();
-    Nt = numOfTimesteps;
+    Nt = numOfIterations;
+    this->numOfFrames = numOfFrames;
+    plotSpacingT = Nt / numOfFrames;
     // make any other changes to the variables here:
-        plotSpacingT *= 2;
+        //plotSpacingT *= 2;
     
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
@@ -261,7 +311,7 @@ void Schrodinger::continueSimulation(string filename, unsigned int numOfTimestep
 
     setV();
     loadFinalState();
-    finiteDifference(false);
+    finiteDifference(!appendOldFile);
 }
 
 Schrodinger::Schrodinger(){
@@ -319,8 +369,8 @@ void Schrodinger::setV(){
             break;
         {case MULTIPLE_SLIT_2D:
             int slitNumber = 2;
-            double slitWidth = Lx2/15;
-            double slitDistance = Lx2/20;
+            double slitWidth = Lx2/10;
+            double slitDistance = Lx2/10;
             setVtoZero();
             // Making constant potential barrier
             for (int x1 = (Nx1/2); x1 < Nx1/2 + VThickness/dx1; x1++){
@@ -341,7 +391,7 @@ void Schrodinger::setV(){
                     }
                 }
                 slitsPlaced++;
-                nextSlitX2 = slitWidth/2 + slitDistance;
+                nextSlitX2 = slitWidth/dx2/2 + slitDistance/dx2;
             }
             // Placing remaining slits, two at a time
             while (slitsPlaced < slitNumber && (nextSlitX2 + slitWidth < Lx2/2)){
@@ -352,7 +402,7 @@ void Schrodinger::setV(){
                     }
                 }
                 slitsPlaced += 2;
-                nextSlitX2 += slitWidth + slitDistance;
+                nextSlitX2 += slitWidth/dx2 + slitDistance/dx2;
             }
             Vmax = V0;
             break;}
@@ -496,9 +546,9 @@ void Schrodinger::finiteDifference1D(char* fileOpenType){
 
 void Schrodinger::finiteDifference2D(char* fileOpenType){
     FILE* plotProbabilityFile = fopen((filename + "_plot_probability").c_str(), fileOpenType);
-    double c1x1 = hbar * dt / dx1 / dx1;
-    double c1x2 = hbar * dt / dx2 / dx2;
-    double c2 = dt / hbar;
+    double c1x1 = hbar * dt / m / dx1 / dx1;
+    double c1x2 = hbar * dt / m / dx2 / dx2;
+    double c2 = 2 * dt / hbar;
     cout << "c1x1: " << c1x1 << endl;
     cout << "c1x2: " << c1x2 << endl;
     cout << "c2:   " << c2 << endl;
@@ -509,8 +559,8 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
     for (int x2 = 1; x2 < Nx2 - 1; x2++){
         for (int x1 = 1; x1 < Nx1 - 1; x1++){
             i = Nx1*x2+x1;
-            psi_r2[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
-            psi_i2[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]);
+            psi_r2[i] = psi_r1[i] + (c1x1 + c1x2 + c2/2*V[i])*psi_i1[i] - c1x1/2*(psi_i1[i+1] + psi_i1[i-1]) - c1x2/2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
+            psi_i2[i] = psi_i1[i] - (c1x1 + c1x2 + c2/2*V[i])*psi_r1[i] + c1x1/2*(psi_r1[i+1] + psi_r1[i-1]) + c1x2/2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]);
         }
     }
     for (int t = 0; t < Nt; t++){
