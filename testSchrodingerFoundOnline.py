@@ -42,13 +42,13 @@ def fillax(x,y,*args,**kw):
 #  variables so they become floats instead of integers.
 #
 N    = 1200     #  Number of spatial points.
-T    = 1000000      #  Number of time steps.  5*N is a nice value for terminating
+T    = 5 * N      #  Number of time steps.  5*N is a nice value for terminating
 #  before anything reaches the boundaries.
 Tp   = 50       #  Number of time steps to increment before updating the plot.
 dx   = 1.0e0    #  Spatial resolution
 m    = 1.0e0    #  Particle mass
-hbar = 1.0e-1    #  Plank's constant
-X    = dx*np.linspace(0,N,N)        #  Spatial axis.
+hbar = 1.0e0    #  Plank's constant
+X    = dx*np.linspace(0,N-1,N)        #  Spatial axis.
 # Potential parameters.  By playing with the type of potential and the height
 # and thickness (for barriers), you'll see the various transmission/reflection
 # regimes of quantum mechanical tunneling.
@@ -66,9 +66,9 @@ POTENTIAL = 'barrier'
 # observe.
 #POTENTIAL = 'barrier'
 #  Initial wave function constants
-sigma = 40.0 # Standard deviation on the Gaussian envelope (remember Heisenberg
+sigma = N / 16.0 # Standard deviation on the Gaussian envelope (remember Heisenberg
 #  uncertainty).
-x0 = round(N/2) - 5*sigma # Time shift
+x0 = N/4.0 #round(N/2) - 5*sigma # Time shift
 k0 = np.pi/20 # Wavenumber (note that energy is a function of k)
 # Energy for a localized gaussian wavepacket interacting with a localized
 # potential (so the interaction term can be neglected by computing the energy
@@ -116,8 +116,9 @@ FU = 2                 #  Future
 #  Initialize wave function.  A present-only state will "split" with half the
 #  wave function propagating to the left and the other half to the right.
 #  Including a "past" state will cause it to propagate one way.
-xn = range(1,N/2)
+xn = range(0,N)
 x = X[xn]/dx    #  Normalized position coordinate
+
 gg = Gaussian(x,x0,sigma)
 cx = np.cos(k0*x)
 sx = np.sin(k0*x)
@@ -125,6 +126,7 @@ psi_r[PR,xn] = cx*gg
 psi_i[PR,xn] = sx*gg
 psi_r[PA,xn] = cx*gg
 psi_i[PA,xn] = sx*gg
+
 # Initial normalization of wavefunctions
 #   Compute the observable probability.
 psi_p = psi_r[PR]**2 + psi_i[PR]**2
@@ -135,6 +137,7 @@ nrm = np.sqrt(P)
 psi_r /= nrm
 psi_i /= nrm
 psi_p /= P
+
 #  Initialize the figure and axes.
 pylab.figure()
 xmin = X.min()
@@ -171,6 +174,11 @@ pylab.xlim(xmin,xmax)
 IDX1 = range(1,N-1)                            #  psi [ k ]
 IDX2 = range(2,N)                              #  psi [ k + 1 ]
 IDX3 = range(0,N-2)                            #  psi [ k - 1 ]
+
+psi_r[PR, IDX1] = psi_r[PA, IDX1] - c1/2*(psi_i[PA,IDX2] - 2 * psi_i[PA, IDX1] + psi_i[PA, IDX3])
+psi_r[PR] += c2V/2*psi_i[PA]
+psi_i[PR, IDX1] = psi_i[PA, IDX1] + c1/2*(psi_r[PA,IDX2] - 2*psi_r[PA,IDX1] + psi_r[PA, IDX3])
+psi_i[PR] -= c2V/2*psi_i[PA]
 for t in range(T+1):
     # Precompute a couple of indexing constants, this speeds up the computation
     psi_rPR = psi_r[PR]

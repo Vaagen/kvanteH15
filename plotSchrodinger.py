@@ -96,6 +96,8 @@ line = variableFile.readline()
 plotSpacingX3 = int(line)
 line = variableFile.readline()
 plotSpacingT = int(line)
+line = variableFile.readline()
+numOfFrames = int(line)
 variableFile.close()
 
 print "The final energy is ",
@@ -197,11 +199,11 @@ startTime = time.clock()
 anim = None
 animationTime = 10; #sec
 if numOfDim == 1:
-    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=True, repeat = False)
 elif numOfDim == 2:
-    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = Nt/plotSpacingT, interval=1000*animationTime/Nt*plotSpacingT, blit=False, repeat = False, fargs=(x1,x2,probPlot))
+    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=False, repeat = False, fargs=(x1,x2,probPlot))
 elif numOfDim == 3:
-    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = Nt/plotSpacingT, interval=20, blit=True, repeat = False)
+    anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=True, repeat = False)
 
 # save the animation as an mp4.  This requires ffmpeg or mencoder to be
 # installed.  The extra_args ensure that the x264 codec is used, so that

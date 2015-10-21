@@ -22,7 +22,7 @@ enum Potential{FREE,CONST_BARRIER_1D,TRIANGLE_1D, CONST_BARRIER_2D, MULTIPLE_SLI
 enum ProbDistrb{GAUSSIAN_1D, GAUSSIAN_2D}; //probability distribution for initial position
 
 
-// uses finite difference method to simulate the schrodinger equation in 2 dimensions from a variety initial conditil
+// uses finite difference method to simulate the schrodinger equation in 2 dimensions from a variety initial conditions
 // If you wish to add new situations or tweek the parameters, make a new constant in the enum "Situation" (and situationString) and a new switch-case in the private member function "runSituation" and make your changes inside this new case. New potentials can be make the same way with "Potentials" and "setV".
 class Schrodinger{
 public:
@@ -42,7 +42,7 @@ public:
     ~Schrodinger();
 private:
 // VARIABLES FOR SIMULATION
-    const double hbar = 1.0; // 1.0545718 * pow(10, -34);
+    const double hbar = 1.0e0; // 1.0545718 * pow(10, -34);
     
     string filename;
     unsigned int numOfDim;
@@ -52,7 +52,7 @@ private:
     int Nx1;
     int Nx2;
     int Nx3;
-    int Nt; //number of timesteps divides by 3
+    int Nt; //number of iterations (timesteps = 3*Nt)
     double dx1;
     double dx2;
     double dx3;
@@ -82,6 +82,8 @@ private:
     int plotSpacingX2; //steps between x2 plotted
     int plotSpacingX3; //steps between x3 plotted
     int plotSpacingT; //steps between t plotted
+    
+    int numOfFrames; // Nt / plotSpacingT
     
     double* V;
     double* psi_r1; //real part of wave function

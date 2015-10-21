@@ -15,84 +15,136 @@ using namespace std;
 //PUBLIC MEMBER FUNCTIONS
 void Schrodinger::run(Situation situation, string filename){
     // standard settings (you should generely override these in you 'Situation', unless it is benifitial to change them in all situations)
+    
     this->filename = filename;
-    numOfDim = 1;
-    Lx1 = 1.0 * pow(10, -3);
-    Lx2 = 5.0 * pow(10, -4);
-    Lx3 = 1.0 * pow(10, -7);
-    Nx1 = 1200;
-    Nx2 = 500;
-    Nx3 = 1000;
-    Nt = 1000;
-    V0 = 0.0;
-    VThickness = 0.0;
-    m = 1;
-    p = 1;
-    startEnergy = 0.0;
-    finalEnergy = 0.0;
-    
-    SDx1 = Lx1 / 16;
-    SDx2 = Lx2 / 16;
-    SDx3 = Lx3 / 16;
-    
-    plotSpacingX1 = 1;
-    plotSpacingX2 = 1;
-    plotSpacingX3 = 1;
-    
-    double numOfFrames = 100;
     
     // set the situation
     // this is where you add new situations (along with adding i new situation in the enum Situation)
     switch (situation) {
         case FREE_ELECTRON_1D:
-            Nx1 = 1200;
             numOfDim = 1;
-            m = pow(10, 0);
-            Lx1 = 1200;
             potential = FREE;
             probDistrb = GAUSSIAN_1D;
-            SDx1 = 40.0;
-            p = 2000 * m;
-            Nt = 65;
+            
+            Lx1 = 1200;
+            Lx2 = 1;
+            Lx3 = 1;
+            
+            Nt = 5 * 1200;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 1200;
+            Nx2 = 1;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 1;
+            plotSpacingX2 = 1;
+            plotSpacingX3 = 1;
+            
+            V0 = 0.0;
+            VThickness = 0.0;
+            
+            m = 1;
+            p = 1;
             break;
         case ELECTRON_CONST_BARRIER_1D:
-            Nx1 = 500;
             numOfDim = 1;
-            m = pow(10, -30);
             potential = CONST_BARRIER_1D;
-            V0 = 2.0 * pow(10, -28);
-            VThickness = Lx1 / 10;
             probDistrb = GAUSSIAN_1D;
-            //SDx1 = SDx1;
-            //SDx2 = SDx2;
-            p = 10;
-            Nt = 1000000;
+            
+            Lx1 = 1200;
+            Lx2 = 1;
+            Lx3 = 1;
+            
+            Nt = 5 * 1200;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 1200;
+            Nx2 = 1;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 1;
+            plotSpacingX2 = 1;
+            plotSpacingX3 = 1;
+            
+            V0 = 1.2 * pow(10, -2);
+            VThickness = Lx1 / 10;
+            
+            m = 1;
+            p = 1;
             break;
         case ELECTRON_TRIANGLE_1D:
-            Nx1 = 1200;
             numOfDim = 1;
-            m = pow(10, -30);
             potential = TRIANGLE_1D;
-            V0 = pow(10, -30);
-            VThickness = Lx1/100;
             probDistrb = GAUSSIAN_1D;
-            //SDx1 = SDx1;
-            p = 10;
-            Nt = 100000;
+            
+            Lx1 = 1200;
+            Lx2 = 1;
+            Lx3 = 1;
+            
+            Nt = 5 * 1200;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 1200;
+            Nx2 = 1;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 1;
+            plotSpacingX2 = 1;
+            plotSpacingX3 = 1;
+            
+            V0 = 1.2 * pow(10, -2);
+            VThickness = Lx1 / 10;
+            
+            m = 1;
+            p = 1;
             // VdistanceToMax is distance from Lx1/2 to max of V, value is set in setV() under case: TRIANGLE_1D
             break;
         case FREE_ELECTRON_2D:
             numOfDim = 2;
-            Nx1 = 500;
-            Nx2 = 250;
-            m = pow(10, -30);
-            potential = FREE;
-            probDistrb = GAUSSIAN_2D;
-            plotSpacingX1 = 1;
-            plotSpacingX2 = 1;
-            //SDx1 = SDx1;
-            Nt = 10000;
-            p = 10;
+            potential = CONST_BARRIER_1D;
+            probDistrb = GAUSSIAN_1D;
+            
+            Lx1 = 800;
+            Lx2 = 600;
+            Lx3 = 1;
+            
+            Nt = 100;
+            
+            numOfFrames = 100;
+            
+            Nx1 = 800;
+            Nx2 = 600;
+            Nx3 = 1;
+            
+            SDx1 = Lx1 / 16;
+            SDx2 = Lx2 / 16;
+            SDx3 = Lx3 / 16;
+            
+            plotSpacingX1 = 2;
+            plotSpacingX2 = 2;
+            plotSpacingX3 = 1;
+            
+            V0 = 0.0;
+            VThickness = 0.0;
+            
+            m = 1;
+            p = 1;
             break;
         case ELECTRON_CONST_BARRIER_2D:
             numOfDim = 2;
@@ -160,11 +212,11 @@ void Schrodinger::run(Situation situation, string filename){
     dx1 = Lx1 / Nx1;
     dx2 = Lx2 / Nx2;
     dx3 = Lx3 / Nx3;
-    k = 2 * 3.1415926535897 * 30 / Lx1; //p/hbar;
-    startX1 = Nx1 / 3;
+    k = 3.1415926535897 / 20; // 2 * 3.1415926535897 * 30 / Lx1; //p/hbar;
+    startX1 = Nx1 / 4;
     startX2 = Nx2 / 2;
     startX3 = Nx3 / 2;
-    plotSpacingT = 1; //Nt/numOfFrames;
+    plotSpacingT = Nt/numOfFrames;
     
     V = new double [Nx1 * Nx2 * Nx3];
     psi_r1 = new double [Nx1 * Nx2 * Nx3];
@@ -179,7 +231,7 @@ void Schrodinger::run(Situation situation, string filename){
     dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + Vmax) * 1;//2.0 * pow(Lx1 / Nx1, 2); // should be calculated some other way dependent on error calculations
     //dt = 0.0005 * dx1 * dx1 / hbar;
     if (numOfDim ==2){
-        dt = 10;
+        dt = hbar/(2 * hbar * hbar/(m*dx1*dx1) + 2 * hbar * hbar/(m*dx2*dx2) + Vmax) * 1;
     }
     if (dt == 0){
         dt = DBL_MIN;
@@ -188,7 +240,7 @@ void Schrodinger::run(Situation situation, string filename){
     
     makeInitState();
     startEnergy = findEnergy();
-    
+
     finiteDifference(true);
 }
 
@@ -218,6 +270,8 @@ Schrodinger::Schrodinger(){
     psi_i1 = nullptr;
     psi_r2 = nullptr;
     psi_i2 = nullptr;
+    startEnergy = 0.0;
+    finalEnergy = 0.0;
 }
 
 Schrodinger::~Schrodinger(){
@@ -370,7 +424,6 @@ void Schrodinger::makeInitState(){
                     psi_i3[Nx1*x2 + x1] = 0;
                 }
             }
-            cout << endl;
             break;
             
         default:
@@ -425,7 +478,7 @@ void Schrodinger::finiteDifference1D(char* fileOpenType){
         }
         for (int x = 1; x < Nx1 - 1; x++){
             psi_r3[x] = psi_r1[x] + (2 * c1 + c2 * V[x]) * psi_i2[x] - c1 * (psi_i2[x + 1] + psi_i2[x - 1]);
-            psi_i3[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_r2[x] + c1 * (psi_r2[x + 1] + psi_r1[x - 1]);
+            psi_i3[x] = psi_i1[x] - (2 * c1 + c2 * V[x]) * psi_r2[x] + c1 * (psi_r2[x + 1] + psi_r2[x - 1]);
         }
         for (int x = 1; x < Nx1 - 1; x++){
             psi_r1[x] = psi_r2[x] + (2 * c1 + c2 * V[x]) * psi_i3[x] - c1 * (psi_i3[x + 1] + psi_i3[x - 1]);
@@ -473,7 +526,7 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
         for (int x2 = 1; x2 < Nx2 - 1; x2++){
             for (int x1 = 1; x1 < Nx1 - 1; x1++){
                 i = Nx1*x2+x1;
-                psi_r3[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i2[i-Nx1]);
+                psi_r3[i] = psi_r1[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i2[i] - c1x1*(psi_i2[i+1] + psi_i2[i-1]) - c1x2*(psi_i2[i+Nx1] + psi_i2[i-Nx1]);
                 psi_i3[i] = psi_i1[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]);
             }
         }
@@ -488,7 +541,7 @@ void Schrodinger::finiteDifference2D(char* fileOpenType){
             for (int x1 = 1; x1 < Nx1 - 1; x1++){
                 i = Nx1*x2+x1;
                 psi_r2[i] = psi_r3[i] + (2*c1x1 + 2*c1x2 + c2*V[i])*psi_i1[i] - c1x1*(psi_i1[i+1] + psi_i1[i-1]) - c1x2*(psi_i1[i+Nx1] + psi_i1[i-Nx1]);
-                psi_i2[i] = psi_i2[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r2[i] + c1x1*(psi_r2[i+1] + psi_r2[i-1]) + c1x2*(psi_r2[i+Nx1] + psi_r2[i-Nx1]);
+                psi_i2[i] = psi_i3[i] - (2*c1x1 + 2*c1x2 + c2*V[i])*psi_r1[i] + c1x1*(psi_r1[i+1] + psi_r1[i-1]) + c1x2*(psi_r1[i+Nx1] + psi_r1[i-Nx1]);
             }
         }
     }
@@ -552,7 +605,6 @@ void Schrodinger::finiteDifference3D(char* fileOpenType){
         }
     }
     fclose(plotProbabilityFile);
-    finalStore();
 }
 
 void Schrodinger::finalStore(){
@@ -570,7 +622,7 @@ void Schrodinger::finalStore(){
 
 void Schrodinger::writeVariablesToFile(){
     ofstream variableFile(filename + "_variables.txt");
-    variableFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb <<  endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl << plotSpacingT << endl;
+    variableFile << numOfDim << endl << Lx1 << endl << Lx2 << endl << Lx3 << endl << Nx1 << endl << Nx2 << endl << Nx3 << endl << Nt << endl << dx1 << endl << dx2 << endl << dx3 << endl << dt << endl << m << endl << p << endl << k << endl << startX1 << endl << startX2 << endl << startX3 << endl << V0 << endl << VThickness << endl << Vmax << endl << startEnergy << endl << finalEnergy << endl << finalProb <<  endl << situation << endl << potential << endl << probDistrb << endl <<  SDx1 << endl << SDx2 << endl << SDx3 << endl << plotSpacingX1 << endl << plotSpacingX2 << endl << plotSpacingX3 << endl << plotSpacingT << endl << numOfFrames << endl;
     variableFile.close();
 }
 
@@ -724,6 +776,8 @@ void Schrodinger::loadVaiables(){
     plotSpacingX3 = stoi(variable);
     getline(variableFile, variable);
     plotSpacingT = stoi(variable);
+    getline(variableFile, variable);
+    numOfFrames = stoi(variable);
     variableFile.close();
 }
 
