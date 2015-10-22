@@ -1,0 +1,6 @@
+//text file setting the values used in the simulation run by the c++ program schrodingerFD
+//DO NOT add or remove any lines exept after at the end of the file to give extra conditions to the potential
+//do only change value or string on the line after a semicolon
+#describtion of situation these values describe (must be ONE line of text):
+electron moving freely
+#

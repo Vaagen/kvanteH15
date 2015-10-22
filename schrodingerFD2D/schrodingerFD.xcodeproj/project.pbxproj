@@ -1,0 +1,250 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FEE1BBCA1BBC156D00B4C7DE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1BBC91BBC156D00B4C7DE /* main.cpp */; };
+		FEE1BBD81BBC39E100B4C7DE /* Schrodinger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FEE1BBC41BBC156C00B4C7DE /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		FEE1BBC61BBC156D00B4C7DE /* schrodingerFD */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = schrodingerFD; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEE1BBC91BBC156D00B4C7DE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Schrodinger.cpp; sourceTree = "<group>"; };
+		FEE1BBD71BBC39E100B4C7DE /* Schrodinger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Schrodinger.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FEE1BBC31BBC156C00B4C7DE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FEE1BBBD1BBC156C00B4C7DE = {
+			isa = PBXGroup;
+			children = (
+				FEE1BBC81BBC156D00B4C7DE /* schrodingerFD */,
+				FEE1BBC71BBC156D00B4C7DE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FEE1BBC71BBC156D00B4C7DE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FEE1BBC61BBC156D00B4C7DE /* schrodingerFD */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FEE1BBC81BBC156D00B4C7DE /* schrodingerFD */ = {
+			isa = PBXGroup;
+			children = (
+				FEE1BBC91BBC156D00B4C7DE /* main.cpp */,
+				FEE1BBD61BBC39E100B4C7DE /* Schrodinger.cpp */,
+				FEE1BBD71BBC39E100B4C7DE /* Schrodinger.h */,
+			);
+			name = schrodingerFD;
+			path = schrodingerFD2D;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FEE1BBC51BBC156C00B4C7DE /* schrodingerFD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FEE1BBCD1BBC156D00B4C7DE /* Build configuration list for PBXNativeTarget "schrodingerFD" */;
+			buildPhases = (
+				FEE1BBC21BBC156C00B4C7DE /* Sources */,
+				FEE1BBC31BBC156C00B4C7DE /* Frameworks */,
+				FEE1BBC41BBC156C00B4C7DE /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = schrodingerFD;
+			productName = schrodingerFD2D;
+			productReference = FEE1BBC61BBC156D00B4C7DE /* schrodingerFD */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FEE1BBBE1BBC156C00B4C7DE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = "Håkon Austlid Taskén";
+				TargetAttributes = {
+					FEE1BBC51BBC156C00B4C7DE = {
+						CreatedOnToolsVersion = 6.4;
+					};
+				};
+			};
+			buildConfigurationList = FEE1BBC11BBC156C00B4C7DE /* Build configuration list for PBXProject "schrodingerFD" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FEE1BBBD1BBC156C00B4C7DE;
+			productRefGroup = FEE1BBC71BBC156D00B4C7DE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FEE1BBC51BBC156C00B4C7DE /* schrodingerFD */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FEE1BBC21BBC156C00B4C7DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEE1BBD81BBC39E100B4C7DE /* Schrodinger.cpp in Sources */,
+				FEE1BBCA1BBC156D00B4C7DE /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		FEE1BBCB1BBC156D00B4C7DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		FEE1BBCC1BBC156D00B4C7DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		FEE1BBCE1BBC156D00B4C7DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = schrodingerFD;
+			};
+			name = Debug;
+		};
+		FEE1BBCF1BBC156D00B4C7DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = schrodingerFD;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FEE1BBC11BBC156C00B4C7DE /* Build configuration list for PBXProject "schrodingerFD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEE1BBCB1BBC156D00B4C7DE /* Debug */,
+				FEE1BBCC1BBC156D00B4C7DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FEE1BBCD1BBC156D00B4C7DE /* Build configuration list for PBXNativeTarget "schrodingerFD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FEE1BBCE1BBC156D00B4C7DE /* Debug */,
+				FEE1BBCF1BBC156D00B4C7DE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FEE1BBBE1BBC156C00B4C7DE /* Project object */;
+}
