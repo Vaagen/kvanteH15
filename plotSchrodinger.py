@@ -4,6 +4,8 @@
 
 fileName = "test_free_electron"
 
+animationTime = 10; #sec
+
 # one should not be needing to do changes to the rest of the script
 
 import numpy as np
@@ -106,35 +108,29 @@ print " times the start energy."
 print "The final probability of finding the particle is: ",
 print finalProb
 
-# get data from xFile'ene
+# load data we would like to plot from various files
 dt = np.dtype("f8")
 plotProbabilityFile = np.fromfile(find(fileName + "_plot_probability"), dtype=dt)
 plotPsiRFile = np.fromfile(find(fileName + "_plot_psi_r"), dtype=dt)
 plotPsiIFile = np.fromfile(find(fileName + "_plot_psi_i"), dtype=dt)
 potentialFile = np.fromfile(find(fileName + "_potential"), dtype=dt)
 
-fig = plt.figure(1)
+maxProb = max(plotProbabilityFile)
+minProb = min(plotProbabilityFile)
 
-# axes used for simulation in 3D
-ax1 = None
-ax2 = None
-ax3 = None
-ax4 = None
+# define some scaling constants
+scaleConstPsi = 0.8 * maxProb / (max([max(plotPsiRFile),max(plotPsiIFile)]))
 
-scaleConstPsi = 0.8 * max(plotProbabilityFile) / (max([max(plotPsiRFile),max(plotPsiIFile)]))
-ax = plt.axes(xlim=(0, Lx1), ylim=(1.1 * scaleConstPsi * min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * max(plotProbabilityFile)))
-probPlot, = ax.plot([], [], 'k', lw = 1, zorder = 3, label = 'Probability')
-psiRPlot, = ax.plot([], [], 'b', lw = 1, zorder = 2, label = 'Re($\Psi$)') # only used for 1D
-psiIPlot, = ax.plot([], [], 'r', lw = 1, zorder = 2, label = 'Im($\Psi$)') # only used for 1D
+scaleConstAx4 = max(plotProbabilityFile[0:Nx1/plotSpacingX1*Nx2/plotSpacingX2])/maxProb
+for i in range(1,numOfFrames):
+    if max(plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)])/maxProb < scaleConstAx4:
+        scaleConstAx4 = max(plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)])/maxProb;
+scaleConstAx2 = scaleConstAx4 + (1 - scaleConstAx4) * 2 / 3.0
+scaleConstAx3 = scaleConstAx4 + (1 - scaleConstAx4) / 3.0
 
+scaleConstEnergy = 0.5 * maxProb / startEnergy
 
-x1 = np.linspace(0,Lx1,Nx1/plotSpacingX1)
-x2 = np.linspace(0,Lx2,Nx2/plotSpacingX2)
-x3 = np.linspace(0,Lx3,Nx3/plotSpacingX3)
-
-scaleConstEnergy = 0.5 * max(plotProbabilityFile) / startEnergy
-
-# initialization function: plot the background of each frame
+# initialization function for 1D: plot the background of each frame
 def init1D():
     plt.plot(x1, scaleConstEnergy * potentialFile, ':k', zorder=0)
     pylab.fill(x1, scaleConstEnergy * potentialFile, facecolor='y', alpha=0.2, zorder=0, label = 'Potential')
@@ -146,35 +142,45 @@ def init1D():
     psiIPlot.set_data([], [])
     return probPlot, psiRPlot, psiIPlot, energyPlot,
 
-def init2D():
-    plt.cla()
-    z = potentialFile[0:Nx1*Nx2:plotSpacingX1].reshape(Nx2,Nx1/plotSpacingX1)[0:Nx2:plotSpacingX2,:]
-    x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    colorLimit = max(abs(potentialFile))
-    if colorLimit == 0:
-        colorLimit = 1
-    potentialPlot = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
-    return potentialPlot
-
-def init3D():
-    ax1 = plt.add_subplot(221)
-    ax2 = plt.add_subplot(222)
-    ax3 = plt.add_subplot(223)
-    ax4 = plt.add_subplot(224)
-    return
-
-# animation function.  This is called sequentially
+# animation function for 1D.  This is called sequentially
 def animate1D(i):
     probPlot.set_data(x1, plotProbabilityFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
     psiRPlot.set_data(x1, scaleConstPsi * plotPsiRFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
     psiIPlot.set_data(x1, scaleConstPsi * plotPsiIFile[Nx1/plotSpacingX1*i:Nx1/plotSpacingX1*(i+1)])
     return probPlot, psiRPlot, psiIPlot,
 
-def animate2D(i, x1, x2, probPlot):
-    z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+
+def init2D():
     x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
-    probPlot = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = max(plotProbabilityFile))
-    return probPlot,
+    z = potentialFile[0:Nx1*Nx2:plotSpacingX1].reshape(Nx2,Nx1/plotSpacingX1)[0:Nx2:plotSpacingX2,:]
+    colorLimit = max(abs(potentialFile))
+    if colorLimit == 0:
+        colorLimit = 1
+    plt.sca(ax1)
+    potentialPlot1 = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
+    plt.sca(ax2)
+    potentialPlot3 = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
+    plt.sca(ax3)
+    potentialPlot2 = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
+    plt.sca(ax4)
+    potentialPlot4 = plt.contourf(x1, x2, z, cmap=ccmaps.cmap('white_black'), zorder = 2, vmin = - colorLimit, vmax = colorLimit)
+    return potentialPlot1, potentialPlot2, potentialPlot3, potentialPlot4,
+
+def animate2D(i):
+    z = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*(i+1)].reshape(Nx2/plotSpacingX2,Nx1/plotSpacingX1)
+    plt.sca(ax1)
+    probPlot1 = plt.contourf(x1,x2,z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = maxProb)
+    plt.sca(ax2)
+    probPlot2 = plt.contourf(x1,x2,z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = maxProb*scaleConstAx2)
+    plt.sca(ax3)
+    probPlot3 = plt.contourf(x1,x2,z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = maxProb*scaleConstAx3)
+    plt.sca(ax4)
+    probPlot3 = plt.contourf(x1,x2,z, cmap=ccmaps.cmap('vaagen_colorscale'), zorder = 1, vmin = 0, vmax = maxProb*scaleConstAx4)
+    return probPlot1, probPlot2, probPlot3, probPlot4
+
+
+def init3D():
+    return
 
 def animate3D(i):
     probMat = plotProbabilityFile[Nx1/plotSpacingX1*Nx2/plotSpacingX2*Nx3/plotSpacingX3*i:Nx1/plotSpacingX1*Nx2/plotSpacingX2*Nx3/plotSpacingX3*(i+1)].reshape(Nx3/plotSpacingX3,Nx2/plotSpacingX2,Nx1/plotSpacingX1)
@@ -193,15 +199,29 @@ def animate3D(i):
     # http://stackoverflow.com/questions/9164950/python-matplotlib-plot3d-with-a-color-for-4d
     return
 
-
-# call the animator.  blit=True means only re-draw the parts that have changed.
 startTime = time.clock()
 anim = None
-animationTime = 10; #sec
 if numOfDim == 1:
+    fig = plt.figure()
+    ax = plt.axes(xlim=(0, Lx1), ylim=(1.1 * scaleConstPsi * min([min(plotPsiRFile), min(plotPsiIFile)]), 1.1 * maxProb))
+    probPlot, = ax.plot([], [], 'k', lw = 1, zorder = 3, label = 'Probability')
+    psiRPlot, = ax.plot([], [], 'b', lw = 1, zorder = 2, label = 'Re($\Psi$)') # only used for 1D
+    psiIPlot, = ax.plot([], [], 'r', lw = 1, zorder = 2, label = 'Im($\Psi$)') # only used for 1D
+    x1 = np.linspace(0,Lx1,Nx1/plotSpacingX1)
+    # call the animator.  blit=True means only re-draw the parts that have changed.
     anim = animation.FuncAnimation(fig, animate1D, init_func=init1D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=True, repeat = False)
 elif numOfDim == 2:
-    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=False, repeat = False, fargs=(x1,x2,probPlot))
+    fig = plt.figure()
+    ax1 = plt.subplot(221)
+    ax2 = plt.subplot(222)
+    ax3 = plt.subplot(223)
+    ax4 = plt.subplot(224)
+    probPlot1 = None
+    probPlot2 = None
+    probPlot3 = None
+    probPlot4 = None
+    x1, x2 = np.meshgrid(np.linspace(0,Lx1,Nx1/plotSpacingX1), np.linspace(0,Lx2,Nx2/plotSpacingX2))
+    anim = animation.FuncAnimation(fig, animate2D, init_func=init2D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=True, repeat = False)
 elif numOfDim == 3:
     anim = animation.FuncAnimation(fig, animate3D, init_func=init3D, frames = numOfFrames, interval=1000*animationTime/numOfFrames, blit=True, repeat = False)
 

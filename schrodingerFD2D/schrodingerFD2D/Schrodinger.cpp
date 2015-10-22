@@ -124,7 +124,7 @@ void Schrodinger::run(Situation situation, string filename){
             Lx2 = 600;
             Lx3 = 1;
             
-            Nt = 10000;
+            Nt = 5000;
             
             numOfFrames = 100;
             
@@ -155,7 +155,7 @@ void Schrodinger::run(Situation situation, string filename){
             Lx2 = 600;
             Lx3 = 1;
             
-            Nt = 1000;
+            Nt = 10000;
             
             numOfFrames = 100;
             
